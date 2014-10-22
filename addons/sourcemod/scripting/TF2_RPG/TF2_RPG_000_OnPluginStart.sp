@@ -1,5 +1,13 @@
 // TF2_RPG_000_OnPluginStart.sp
 
+public Plugin:myinfo=
+{
+	name="TF2 RPG OnPluginStart",
+	author=AUTHORS,
+	description="TF2 RPG Core Plugins",
+	version=VERSION_NUM,
+};
+
 //=============================================================================
 // OnPluginStart
 //=============================================================================
@@ -11,7 +19,9 @@ public OnPluginStart()
 	if(GetExtensionFileStatus("sdkhooks.ext") < 1)
 		SetFailState("SDK Hooks is not loaded.");
 
-	RPGSource_Database_OnPluginStart();
+	//RPGSource_Database_OnPluginStart();
+	TF2_RPG_LoadConfiguration_OnPluginStart();
+	TF2_RPG_000_OnPlayerDeath_OnPluginStart();
 
 	PrintToServer("[TF2 RPG] Plugin finished loading.\n-------------------END OnPluginStart-------------------");
 }
