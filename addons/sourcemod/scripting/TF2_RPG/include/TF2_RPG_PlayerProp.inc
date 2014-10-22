@@ -22,7 +22,7 @@ enum RPGPlayerProp
 native RPGSetPlayerProp(client,RPGPlayerProp:property,any:value);
 native any:RPGGetPlayerProp(client,RPGPlayerProp:property);
 
-stock bool:RPGValidPlayer(client,bool:check_alive=false,bool:alivecheckbyhealth=false) {
+stock bool:IsValidPlayer(client,bool:check_alive=false,bool:alivecheckbyhealth=false) {
 	if(client>0 && client<=MaxClients && IsClientConnected(client) && IsClientInGame(client))
 	{
 		if(check_alive && !IsPlayerAlive(client))
