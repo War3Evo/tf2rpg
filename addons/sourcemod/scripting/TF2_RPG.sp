@@ -28,7 +28,23 @@
 #include "TF2_RPG/TF2_RPG_InitForwards.sp"
 #include "TF2_RPG/TF2_RPG_InitNatives.sp"
 
+#include "TF2_RPG/TF2_RPG_000_OnGameFrame.sp"
+#include "TF2_RPG/TF2_RPG_000_OnPlayerDeath.sp"
+#include "TF2_RPG/TF2_RPG_000_OnPluginStart.sp"
+#include "TF2_RPG/TF2_RPG_LevelCheck.sp"
+#include "TF2_RPG/TF2_RPG_LoadConfiguration.sp"
 #include "TF2_RPG/TF2_RPG_PlayerClass.sp"
+
+//#include "TF2_RPG/"
+//#include "TF2_RPG/"
+//#include "TF2_RPG/"
+//#include "TF2_RPG/"
+//#include "TF2_RPG/"
+//#include "TF2_RPG/"
+//#include "TF2_RPG/"
+//#include "TF2_RPG/"
+//#include "TF2_RPG/"
+//#include "TF2_RPG/"
 
 public Plugin:myinfo=
 {
@@ -90,7 +106,8 @@ public APLRes:AskPluginLoad2(Handle:plugin,bool:late,String:error[],err_max)
 public OnAllPluginsLoaded()
 {
 	PrintToServer("OnAllPluginsLoaded");
-	ConnectDB();
+	if(!LoadConfigurationFile()) LogError("[TF2_RPG] Unable to Load Configuartion files!");
+	//ConnectDB();
 }
 //=============================================================================
 // OnMapStart
