@@ -90,7 +90,7 @@ public APLRes:AskPluginLoad2(Handle:plugin,bool:late,String:error[],err_max)
 public OnAllPluginsLoaded()
 {
 	PrintToServer("OnAllPluginsLoaded");
-	//ConnectDB();
+	ConnectDB();
 }
 //=============================================================================
 // OnMapStart
