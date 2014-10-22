@@ -96,7 +96,7 @@ public Action:RPG_PlayerDeathEvent(Handle:event,const String:name[],bool:dontBro
 	{
 		//pre death event, internal event
 
-		OnRPGEventDeath(victimIndex,attackerIndex,distance,attacker_hpleft);
+		OnRPGEventDeath(event,victimIndex,attackerIndex,distance,attacker_hpleft);
 
 		SetPlayerProp(victimIndex,bStatefulSpawn,true);//next spawn shall be stateful
 
@@ -105,7 +105,10 @@ public Action:RPG_PlayerDeathEvent(Handle:event,const String:name[],bool:dontBro
 }
 
 // filtered for dead ringer:
-public OnRPGEventDeath(victimIndex,attackerIndex,distance,attacker_hpleft)
+public OnRPGEventDeath(Handle:event,victimIndex,attackerIndex,distance,attacker_hpleft)
 {
 	// Handle Death Events
+
+	new WeaponId = GetEventInt(event, "weaponid");
+	DP("weapon id test %d",WeaponId);
 }
