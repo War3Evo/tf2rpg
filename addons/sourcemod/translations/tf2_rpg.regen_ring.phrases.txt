@@ -1,0 +1,15 @@
+"Phrases"
+{
+	"RegenerationRingLongName"
+	{
+		"en"		"Ring of Regeneration"
+	}
+	"RegenerationRingShortDesc"
+	{
+		"en"		"regenerate hp"
+	}
+	"RegenerationRingLongDesc"
+	{
+		"en"		"Regenerates health slowly."
+	}
+}

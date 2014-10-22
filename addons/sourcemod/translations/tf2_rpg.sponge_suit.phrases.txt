@@ -1,0 +1,15 @@
+"Phrases"
+{
+	"SpongeSuitLongName"
+	{
+		"en"		"Sponge Suit"
+	}
+	"SpongeSuitShortDesc"
+	{
+		"en"		"Absorbs Jarate"
+	}
+	"SpongeSuitLongDesc"
+	{
+		"en"		"Absorbs 2 Jarate effects."
+	}
+}
