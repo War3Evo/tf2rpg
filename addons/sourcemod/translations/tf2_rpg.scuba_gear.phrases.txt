@@ -1,0 +1,15 @@
+"Phrases"
+{
+	"ScubaGearLongName"
+	{
+		"en"		"Scuba Gear"
+	}
+	"ScubaGearShortDesc"
+	{
+		"en"		"Water Breathing"
+	}
+	"ScubaGearLongDesc"
+	{
+		"en"		"Unlimited under water breathing for 1 life"
+	}
+}

@@ -1,0 +1,15 @@
+"Phrases"
+{
+	"FireVestLongName"
+	{
+		"en"		"Fire Vest"
+	}
+	"FireVestShortDesc"
+	{
+		"en"		"Flame Resistance"
+	}
+	"FireVestLongDesc"
+	{
+		"en"		"Absorbs 300 direct fire damage.\nExpires on death or when absorbed all damage."
+	}
+}
