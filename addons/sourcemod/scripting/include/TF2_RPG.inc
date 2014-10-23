@@ -5,17 +5,6 @@
 #endif
 #define _TF2_RPG_included
 
-#undef REQUIRE_EXTENSIONS
-#include <sourcemod>
-#include <sdkhooks>
-#include <sdktools>
-#include <sdktools_functions>
-#include <tf2>
-#include <tf2_stocks>
-#include <morecolors>
-#include <keyvalues>
-#include <tf2attributes>
-
 #include "TF2_RPG/include/TF2_RPG_Constants"
 #include "TF2_RPG/include/TF2_RPG_PlayerProp"
 
@@ -57,6 +46,29 @@ native RPG_GetLevel(client, race);
 // forwards forwards forwards forwards forwards forwards forwards forwards forwards forwards forwards forwards forwards
 // forwards forwards forwards forwards forwards forwards forwards forwards forwards forwards forwards forwards forwards
 
+/**
+ *
+ * @param plugin_name			the plugin name without path and extension
+ * @param client				client index.
+ * @param buff_name				the name of the buff
+ * @param value					any value
+ *
+ * @return						return Plugin_Handled if player can purchase item.
+ *
+ */
+forward Action:OnItemPurchase(const String:plugin_name[], client, const String:buff_name[], any:value)
+
+/**
+ *
+ * @param plugin_name			the plugin name without path and extension
+ * @param client				client index.
+ * @param buff_name				the name of the buff
+ * @param value					any value
+ *
+ * @noreturn
+ *
+ */
+forward OnItemLost(const String:plugin_name[], client, const String:buff_name[], any:value)
 
 /*
  * STOCKS STOCKS STOCKS STOCKS STOCKS STOCKS STOCKS STOCKS STOCKS STOCKS STOCKS STOCKS STOCKS STOCKS STOCKS STOCKS STOCKS STOCKS STOCKS STOCKS
@@ -80,6 +92,91 @@ native RPG_GetLevel(client, race);
  * STOCKS STOCKS STOCKS STOCKS STOCKS STOCKS STOCKS STOCKS STOCKS STOCKS STOCKS STOCKS STOCKS STOCKS STOCKS STOCKS STOCKS STOCKS STOCKS STOCKS
  */
 
+/*
+ * May remove, keeping for future reference
+ *
+stock AddShopItemNumber(Handle:handleArray, TheArray[1])
+{
+	// Make sure it is a duplicate
+	new TmpBuffer[1];
+	for(new i = 0; i < GetArraySize(handleArray); i++)
+	{
+
+		GetArrayArray(handleArray, i, TmpBuffer);
+		// If first number is duplicate, return
+		if(TheArray[0] == TmpBuffer[0])
+		{
+			return i;
+		}
+	}
+	PushArrayCell(handleArray, TheArray);
+
+	return -1;
+}*/
+
+/**
+ * Gets the Base name of a path.
+ * Examples:
+ * blub.txt -> "blub.txt"
+ * /sourcemod/extensions/example.ext.so -> "example.ext.so"
+ *
+ * @param path			File path
+ * @param buffer		String buffer array
+ * @param size			Size of string buffer
+ * @noreturn
+ */
+stock bool:File_GetBaseName(const String:path[], String:buffer[], size)
+{
+	if (path[0] == '\0') {
+		buffer[0] = '\0';
+		return;
+	}
+
+	new pos_start = FindCharInString(path, '/', true);
+
+	if (pos_start == -1) {
+		pos_start = FindCharInString(path, '\\', true);
+	}
+
+	pos_start++;
+
+	strcopy(buffer, size, path[pos_start]);
+}
+
+/**
+ * Gets the File name of a path.
+ * blub.txt -> "blub"
+ * /sourcemod/extensions/example.ext.so -> "example.ext"
+ *
+ * @param path			File path
+ * @param buffer		String buffer array
+ * @param size			Size of string buffer
+ * @noreturn
+ */
+stock bool:File_GetFileName(const String:path[], String:buffer[], size)
+{
+	if (path[0] == '\0') {
+		buffer[0] = '\0';
+		return;
+	}
+
+	File_GetBaseName(path, buffer, size);
+
+	new pos_ext = FindCharInString(buffer, '.', true);
+
+	if (pos_ext != -1) {
+		buffer[pos_ext] = '\0';
+	}
+}
+
+stock GetPluginName(String:buffer[],maxlength)
+{
+	decl String:pluginName[80];
+	GetPluginFilename(INVALID_HANDLE, pluginName, maxlength);
+	File_GetFileName(pluginName, pluginName, maxlength)
+	ReplaceString(pluginName, maxlength, ".smx", "", false);
+	strcopy(buffer, 80, pluginName);
+}
 
 stock Float:calcDistance(Float:x1,Float:x2,Float:y1,Float:y2,Float:z1,Float:z2){
 	//Distance between two 3d points
