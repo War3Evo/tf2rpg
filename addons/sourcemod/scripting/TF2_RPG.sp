@@ -20,6 +20,17 @@
 
 #pragma semicolon 1
 
+#undef REQUIRE_EXTENSIONS
+#include <sourcemod>
+#include <sdkhooks>
+#include <sdktools>
+#include <sdktools_functions>
+#include <tf2>
+#include <tf2_stocks>
+#include <morecolors>
+#include <keyvalues>
+#include <tf2attributes>
+
 #include <TF2_RPG>
 
 #include "TF2_RPG/include/TF2_RPG_Version_Info.inc"
