@@ -32,3 +32,18 @@ new p_properties[MAXPLAYERSCUSTOM][RPGPlayerProp];
 new Handle:g_hWeaponsXP;
 new Handle:g_hLevel_Progression;
 
+//=============================
+// Shop Items
+//=============================
+
+new Handle:g_hItemNumber;
+new Handle:g_h_ItemCategorys;
+new Handle:g_hItemLongName;
+new Handle:g_hItemShortDesc;
+new Handle:g_hItemLongDesc;
+new Handle:g_hItemCost;
+new Handle:g_hItemClass;
+new Handle:g_hItemBuyName;
+new Handle:g_hItemBuffName;
+new Handle:g_hItemValue;
+
