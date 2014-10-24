@@ -15,6 +15,7 @@ public TF2_RPG_CommandHook_Forwards()
 {
 	g_hOnOnRPGSayChatPre       = CreateGlobalForward("OnRPGSayChatPre", ET_Hook, Param_Cell, Param_String);
 	g_hOnOnRPGSayTeamChatPre       = CreateGlobalForward("OnRPGSayTeamChatPre", ET_Hook, Param_Cell, Param_String);
+	g_hOnOnRPGSayAllChatPre       = CreateGlobalForward("OnRPGSayAllChatPre", ET_Hook, Param_Cell, Param_String);
 }
 
 public TF2_RPG_CommandHook_OnPluginStart()
@@ -45,6 +46,15 @@ public Action:RPG_SayCommand(client,args)
 		return Plugin_Handled;
 	}
 
+	Call_StartForward(g_hOnOnRPGSayAllChatPre);
+	Call_PushCell(client);
+	Call_PushStringEx(arg1,sizeof(arg1),SM_PARAM_STRING_COPY,SM_PARAM_COPYBACK);
+	Call_Finish(Action:returnVal);
+	if(returnVal != Plugin_Continue)
+	{
+		return Plugin_Handled;
+	}
+
 	if(Internal_RPG_SayCommand(client,arg1))
 	{
 		returnblocking=Plugin_Handled;
@@ -64,6 +74,23 @@ public Action:RPG_TeamSayCommand(client,args)
 	new Action:returnblocking=Plugin_Continue;
 
 	// pre-hook forward here
+	Call_StartForward(g_hOnOnRPGSayTeamChatPre);
+	Call_PushCell(client);
+	Call_PushStringEx(arg1,sizeof(arg1),SM_PARAM_STRING_COPY,SM_PARAM_COPYBACK);
+	Call_Finish(Action:returnVal);
+	if(returnVal != Plugin_Continue)
+	{
+		return Plugin_Handled;
+	}
+
+	Call_StartForward(g_hOnOnRPGSayAllChatPre);
+	Call_PushCell(client);
+	Call_PushStringEx(arg1,sizeof(arg1),SM_PARAM_STRING_COPY,SM_PARAM_COPYBACK);
+	Call_Finish(Action:returnVal);
+	if(returnVal != Plugin_Continue)
+	{
+		return Plugin_Handled;
+	}
 
 	if(Internal_RPG_SayCommand(client,arg1))
 	{
@@ -108,5 +135,7 @@ bool:Internal_RPG_SayCommand(client,String:arg1[256])
 		ShowMenuShopCategory(client);
 		return true;
 	}
+
+	return false;
 }
 
