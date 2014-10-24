@@ -7,6 +7,7 @@ new Handle:g_hShopItemNumber;
 public TF2_RPG_ShopItem_Engine_OnPluginStart()
 {
 	LoadTranslations("tf2_rpg.shopmenu.phrases.txt");
+	LoadTranslations("tf2_rpg.item_categories.phrases.txt");
 
 	g_hItemNumber = CreateArray(1);
 	g_h_ItemCategorys = CreateArray(ByteCountToCells(64)); //string
@@ -44,15 +45,14 @@ public TF2_RPG_Item_InitNatives()
 
 ShowMenuShopCategory(client)
 {
-	//SetTrans(client);
 	new Handle:shopMenu = CreateMenu(RPG_ShopMenuCategory_Sel);
 	SetMenuExitButton(shopMenu, true);
-	new currency = RPG_GetCurrency(client);
+	//new currency = RPG_GetCurrency(client);
 
 	new String:title[300];
-	Format(title,sizeof(title), "%T\n", "[TF2 RPG] Browse the itemshop. You have {amount}/{amount} items", GetTrans(), GetClientItemsOwned(client),iGetMaxShopitemsPerPlayer(client));
-	Format(title,sizeof(title), "%s%T", title, "Your current balance: {amount}/{maxamount}", GetTrans(), title, currency, GetMaxCurrency(client));
-	Format(title, sizeof(title), "%s%s", title, currencyName);
+	Format(title,sizeof(title), "%T\n", "[TF2 RPG] Browse the itemshop. You have {amount}/{amount} items", client, 0, 3);
+	Format(title,sizeof(title), "%s%T", title, "Your current balance: {amount}/{maxamount}", client, title, 0, 100);
+	//Format(title, sizeof(title), "%s%s", title, currencyName);
 
 	SetMenuTitle(shopMenu,title);
 
@@ -61,6 +61,8 @@ ShowMenuShopCategory(client)
 	new CurrentClass=TF2_GetPlayerClass(client);
 
 	decl String:category[64];
+	decl String:linestr[96];
+
 	new Handle:h_TempItemCategorys = CreateArray(ByteCountToCells(64));
 
 	for(new i = 0; i < GetArraySize(g_hItemNumber); i++)
@@ -82,7 +84,9 @@ ShowMenuShopCategory(client)
 	{
 		GetArrayString(h_ItemCategorys, 0, category, sizeof(category));
 
-		AddMenuItem(shopMenu, category, category, ITEMDRAW_DEFAULT);
+		Format(linestr,sizeof(linestr), "%T", category, client);
+
+		AddMenuItem(shopMenu, category, linestr, ITEMDRAW_DEFAULT);
 		RemoveFromArray(h_ItemCategorys, 0);
 	}
 
@@ -93,7 +97,6 @@ ShowMenuShopCategory(client)
 
 ShowMenuShop(client, const String:category[]="")
 {
-	SetTrans(client);
 	new Handle:shopMenu=CreateMenu(RPG_ShopMenu_Selected);
 	SetMenuExitButton(shopMenu,true);
 
@@ -103,8 +106,8 @@ ShowMenuShop(client, const String:category[]="")
 	decl String:currencyName[MAX_CURRENCY_NAME];
 	RPG_GetCurrencyName(currency, currencyName, sizeof(currencyName));
 
-	Format(title,sizeof(title), "%T\n", "[TF2 RPG] Browse the itemshop. You have {amount}/{amount} items", GetTrans(), GetClientItemsOwned(client),iGetMaxShopitemsPerPlayer(client));
-	Format(title,sizeof(title), "%s%T", title, "Your current balance: {amount}/{maxamount}", GetTrans(), title, currency, GetMaxCurrency(client));
+	Format(title,sizeof(title), "%T\n", "[TF2 RPG] Browse the itemshop. You have {amount}/{amount} items", client, 0, 3);
+	Format(title,sizeof(title), "%s%T", title, "Your current balance: {amount}/{maxamount}", client, title, 0, 100));
 	Format(title, sizeof(title), "%s%s", title, currencyName);
 
 	SetMenuTitle(shopMenu,title);
@@ -132,7 +135,7 @@ ShowMenuShop(client, const String:category[]="")
 			if (StrEqual(category, itemcategory))
 			{
 				// add item
-
+				Format(linestr,sizeof(linestr), "%T", itemcategory, client);
 
 				AddMenuItem(shopMenu,itembuf,linestr,ITEMDRAW_DEFAULT);
 			}
