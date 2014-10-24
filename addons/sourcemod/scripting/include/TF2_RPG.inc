@@ -23,6 +23,28 @@
 // natives natives natives natives natives natives natives natives natives natives natives natives natives natives
 // natives natives natives natives natives natives natives natives natives natives natives natives natives natives
 
+/**
+ * gets special variables from the Main RPG plugin,
+ *
+ * Warning! Only use, if you know what your doing.
+ *
+ * @param variabletoretrieve		RPGVar enum from TF2_RPG_Constants.inc
+ * @return							returns any.  If your retrieving a float, use Float:RPGGetVar(whatever);
+ *
+ */
+native any:RPG_GetVar(RPGVar:variabletoretrieve);
+
+/**
+ * sets special variables from the Main RPG plugin,
+ *
+ * Warning! Only use, if you know what your doing.
+ *
+ * @param variabletoretrieve		RPGVar enum from TF2_RPG_Constants.inc
+ * @param value						any value that is accepted by RPGVar enum
+ * @noreturn
+ */
+native RPG_SetVar(RPGVar:variabletoretrieve,any:value);
+
 native RPG_SetLevel(client, race, level);
 native RPG_GetLevel(client, race);
 
@@ -45,6 +67,34 @@ native RPG_GetLevel(client, race);
 // forwards forwards forwards forwards forwards forwards forwards forwards forwards forwards forwards forwards forwards
 // forwards forwards forwards forwards forwards forwards forwards forwards forwards forwards forwards forwards forwards
 // forwards forwards forwards forwards forwards forwards forwards forwards forwards forwards forwards forwards forwards
+
+/**
+ * Allow you to capture Say chat and process it before TF2 RPG
+ *
+ * @param client			client index.
+ * @param ChatString		The chat string the client typed.
+ * 							You can change the ChatString by using
+ * 							strcopy(ChatString, sizeof(ChatString), const String:source[]);
+ * 							then return Plugin_Changed.
+ *
+ * @return					return Plugin_Handled to stop TF2 RPG from processing chat command,
+ * 							otherwise return Plugin_Continue.
+*/
+forward Action:OnRPGSayChatPre(client,String:ChatString[192]);
+
+/**
+ * Allow you to capture Team Say chat and process it before TF2 RPG
+ *
+ * @param client			client index.
+ * @param ChatString		The chat string the client typed.
+ * 							You can change the ChatString by using
+ * 							strcopy(ChatString, sizeof(ChatString), const String:source[]);
+ * 							then return Plugin_Changed.
+ *
+ * @return					return Plugin_Handled to stop TF2 RPG from processing chat command,
+ * 							otherwise return Plugin_Continue.
+*/
+forward Action:OnRPGSayTeamChatPre(client,String:ChatString[192]);
 
 /**
  *
@@ -113,6 +163,27 @@ stock AddShopItemNumber(Handle:handleArray, TheArray[1])
 
 	return -1;
 }*/
+
+stock RPGChatBlock:CommandCheck(String:compare[],String:commandwanted[])
+{
+	new String:commandwanted2[70];
+	new String:commandwanted3[70];
+	new String:commandwanted4[70];
+	Format(commandwanted2,sizeof(commandwanted2),"\\%s",commandwanted);
+	Format(commandwanted3,sizeof(commandwanted3),"/%s",commandwanted);
+	Format(commandwanted4,sizeof(commandwanted4),"!%s",commandwanted);
+	if(strcmp(compare,commandwanted2,false)==0
+	||strcmp(compare,commandwanted3,false)==0)
+	{
+		return RPGBlock;
+	}
+	else if(strcmp(compare,commandwanted,false)==0 || strcmp(compare,commandwanted4,false)==0)
+	{
+		return RPGTrue;
+	}
+
+	return RPGFalse;
+}
 
 /**
  * Gets the Base name of a path.
@@ -337,6 +408,9 @@ public SharedPlugin:__pl_TF2_RPG =
 public __pl_TF2_RPG_SetNTVOptional()
 {
 	//MarkNativeAsOptional("native_here");
+	MarkNativeAsOptional("RPG_GetVar");
+	MarkNativeAsOptional("RPG_SetVar");
+
 	MarkNativeAsOptional("RPG_SetXP");
 	MarkNativeAsOptional("RPG_GetXP");
 
