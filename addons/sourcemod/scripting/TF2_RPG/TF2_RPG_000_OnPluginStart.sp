@@ -23,6 +23,7 @@ public OnPluginStart()
 	TF2_RPG_LoadConfiguration_OnPluginStart();
 	TF2_RPG_000_OnPlayerDeath_OnPluginStart();
 	TF2_RPG_ShopItem_Engine_OnPluginStart();
+	TF2_RPG_CommandHook_OnPluginStart();
 
 	PrintToServer("[TF2 RPG] Plugin finished loading.\n-------------------END OnPluginStart-------------------");
 }
