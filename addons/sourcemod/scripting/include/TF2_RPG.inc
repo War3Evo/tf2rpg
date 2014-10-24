@@ -45,8 +45,8 @@ native any:RPG_GetVar(RPGVar:variabletoretrieve);
  */
 native RPG_SetVar(RPGVar:variabletoretrieve,any:value);
 
-native RPG_SetLevel(client, race, level);
-native RPG_GetLevel(client, race);
+native RPG_SetLevel(client, class, level);
+native RPG_GetLevel(client, class);
 
 
 // forwards forwards forwards forwards forwards forwards forwards forwards forwards forwards forwards forwards forwards
@@ -95,6 +95,21 @@ forward Action:OnRPGSayChatPre(client,String:ChatString[192]);
  * 							otherwise return Plugin_Continue.
 */
 forward Action:OnRPGSayTeamChatPre(client,String:ChatString[192]);
+
+/**
+ * Allow you to capture both Say and Team Say chat and process it before TF2 RPG
+ * OnRPGSayAllChatPre happens after OnRPGSayChatPre and OnRPGSayTeamChatPre
+ *
+ * @param client			client index.
+ * @param ChatString		The chat string the client typed.
+ * 							You can change the ChatString by using
+ * 							strcopy(ChatString, sizeof(ChatString), const String:source[]);
+ * 							then return Plugin_Changed.
+ *
+ * @return					return Plugin_Handled to stop TF2 RPG from processing chat command,
+ * 							otherwise return Plugin_Continue.
+*/
+forward Action:OnRPGSayAllChatPre(client,String:ChatString[192]);
 
 /**
  *
@@ -163,6 +178,43 @@ stock AddShopItemNumber(Handle:handleArray, TheArray[1])
 
 	return -1;
 }*/
+
+/**
+ * Prints a message in the chat area with TF2 RPG plugin tag pre-appended.
+ *
+ * @param client      Client index, pass 0 for message to all.
+ * @param szMessage   Message (formatting rules).
+ * @return            No return
+ */
+stock RPG_ChatMessage(client, const String:szMessage[], any:...)
+{
+	if (client == 0)
+	{
+		decl String:szBuffer[MAX_MESSAGE_LENGTH];
+		for (new i = 1; i <= MaxClients; i++)
+		{
+			if (IsClientInGame(i) && !IsFakeClient(i))
+			{
+				SetGlobalTransTarget(i);
+				VFormat(szBuffer, sizeof(szBuffer), szMessage, 3);
+				Format(szBuffer, sizeof(szBuffer), "%s %s", PLUGIN_TAG, szBuffer);
+				CPrintToChat(i, szBuffer);
+			}
+		}
+	}
+	else
+	{
+		decl String:szBuffer[MAX_MESSAGE_LENGTH];
+		SetGlobalTransTarget(client);
+		VFormat(szBuffer, sizeof(szBuffer), szMessage, 3);
+		Format(szBuffer, sizeof(szBuffer), "%s %s", PLUGIN_TAG, szBuffer);
+
+		if(IsValidPlayer(client) && !IsFakeClient(client))
+		{
+			CPrintToChat(client, szBuffer);
+		}
+	}
+}
 
 stock RPGChatBlock:CommandCheck(String:compare[],String:commandwanted[])
 {
@@ -317,13 +369,13 @@ stock TF_SetCloakLevel(client, Float:cloaklevel)
 {
 	//new index = GetPlayerWeaponSlot(client, 1);
 	//if (index > 0)
-	if (ValidPlayer(client))
+	if (IsValidPlayer(client))
 		SetEntPropFloat(client, Prop_Send, "m_flCloakMeter", cloaklevel);
 }
 stock Float:TF_GetCloakLevel(client)
 {
 	//new index = GetPlayerWeaponSlot(client, 1);
-	if (ValidPlayer(client))
+	if (IsValidPlayer(client))
 		return GetEntPropFloat(client, Prop_Send, "m_flCloakMeter");
 	else
 		return 0.0;
