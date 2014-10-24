@@ -14,6 +14,10 @@ new bHasDiedThisFrame[MAXPLAYERSCUSTOM];
 
 new bool:FirstTimeMapStart=false;
 
+new TransClient;
+
+new RPGVarArr[RPGVar];
+
 //==============================
 // DATABASE
 //==============================
