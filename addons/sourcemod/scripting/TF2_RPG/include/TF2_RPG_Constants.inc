@@ -20,6 +20,8 @@ enum TFClassType
 
 #define MAXCLASSES 10 // there is actually 9, but need 10 because of the "unknown" variable in TFClassType
 
+#define PLUGIN_TAG "{green}[TF2RPG]{default}"
+
 enum RPGChatBlock
 {
 	RPGFalse=0,
@@ -38,8 +40,6 @@ enum RPGVar
 	EventArg2,
 	EventArg3,
 	EventArg4,
-
-	TransClient,//who to translate
 
 	SmEvent, //usual game events from sm hooked events
 }
