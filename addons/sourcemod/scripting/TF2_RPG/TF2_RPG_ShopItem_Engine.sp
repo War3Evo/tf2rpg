@@ -6,6 +6,8 @@ new Handle:g_hShopItemNumber;
 
 public TF2_RPG_ShopItem_Engine_OnPluginStart()
 {
+	LoadTranslations("tf2_rpg.shopmenu.phrases.txt");
+
 	g_hItemNumber = CreateArray(1);
 	g_h_ItemCategorys = CreateArray(ByteCountToCells(64)); //string
 	g_hItemLongName = CreateArray(ByteCountToCells(32)); //string
