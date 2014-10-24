@@ -20,3 +20,27 @@ enum TFClassType
 
 #define MAXCLASSES 10 // there is actually 9, but need 10 because of the "unknown" variable in TFClassType
 
+enum RPGChatBlock
+{
+	RPGFalse=0,
+	RPGTrue,
+	RPGBlock,
+}
+
+enum RPGVar
+{
+	hDatabase, // Handle to database
+	hDatabaseType, // DBI driver, ie sqlite or mysql
+	hSaveEnabledCvar, //Handle to rpg_savexp
+
+	TheItemBoughtOrLost, // item in question in events such as item bought or item lost
+	EventArg1, //generic RPG event arguments
+	EventArg2,
+	EventArg3,
+	EventArg4,
+
+	TransClient,//who to translate
+
+	SmEvent, //usual game events from sm hooked events
+}
+
