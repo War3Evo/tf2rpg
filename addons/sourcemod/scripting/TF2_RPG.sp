@@ -36,19 +36,21 @@
 #include "TF2_RPG/include/TF2_RPG_Version_Info.inc"
 #include "TF2_RPG/include/TF2_RPG_Variables.inc"
 
+#include "TF2_RPG/include/TF2_RPG_Internal_Stocks.inc"
+
 #include "TF2_RPG/TF2_RPG_InitForwards.sp"
 #include "TF2_RPG/TF2_RPG_InitNatives.sp"
 
 #include "TF2_RPG/TF2_RPG_000_OnGameFrame.sp"
 #include "TF2_RPG/TF2_RPG_000_OnPlayerDeath.sp"
 #include "TF2_RPG/TF2_RPG_000_OnPluginStart.sp"
+#include "TF2_RPG/TF2_RPG_CommandHook"
 #include "TF2_RPG/TF2_RPG_LevelCheck.sp"
 #include "TF2_RPG/TF2_RPG_LoadConfiguration.sp"
+#include "TF2_RPG/TF2_RPG_Misc_Natives"
 #include "TF2_RPG/TF2_RPG_PlayerClass.sp"
+#include "TF2_RPG/TF2_RPG_ShopItem_Engine"
 
-//#include "TF2_RPG/"
-//#include "TF2_RPG/"
-//#include "TF2_RPG/"
 //#include "TF2_RPG/"
 //#include "TF2_RPG/"
 //#include "TF2_RPG/"
