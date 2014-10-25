@@ -211,8 +211,6 @@ stock bool:RPG_TryToBuyItem(client,item,bool:reshowmenu=true)
 		return false;
 	}
 
-	new credits=GetPlayerProp(client,iPlayerMoney);
-
 	decl String:sPluginName[64];
 	decl String:BuffName[16];
 
@@ -234,6 +232,24 @@ stock bool:RPG_TryToBuyItem(client,item,bool:reshowmenu=true)
 		return false;
 	}
 
+	new any:ItemCost=GetArrayCell(g_hItemCost, item);
+
+	new credits=GetPlayerProp(client,iPlayerMoney);
+
+	decl String:itemname[32];
+	GetArrayString(g_hItemLongName, item, itemname, sizeof(itemname));
+
+	if(ItemCost>credits)
+	{
+		RPG_ChatMessage(client,"%T","You cannot afford {itemname}", client, itemname);
+		return false;
+	}
+	else
+	{
+		credits-=ItemCost;
+		SetPlayerProp(client,iPlayerMoney,credits);
+	}
+
 	returnblocking=Plugin_Continue;
 	Call_StartForward(g_hOnItemPurchase);
 	Call_PushCell(item);
@@ -244,9 +260,6 @@ stock bool:RPG_TryToBuyItem(client,item,bool:reshowmenu=true)
 	Call_Finish(Action:returnVal);
 	if(returnVal == Plugin_Handled)
 	{
-		decl String:itemname[32];
-		GetArrayString(g_hItemLongName, item, itemname, sizeof(itemname));
-
 		RPG_ChatMessage(client,"%T","You have successfully purchased {itemname}", client, itemname);
 		return true;
 	}
