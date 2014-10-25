@@ -6,5 +6,6 @@
 public bool:TF2_RPG_InitForwards()
 {
 	TF2_RPG_CommandHook_Forwards();
+	TF2_RPG_ShopItem_Engine_Forwards();
 	return true;
 }
