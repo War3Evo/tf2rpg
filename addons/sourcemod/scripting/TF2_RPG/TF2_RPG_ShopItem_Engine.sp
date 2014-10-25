@@ -45,7 +45,7 @@ public OnRegisterShopItem(const String:plugin_name[], const String:item_long_nam
 
 public TF2_RPG_ShopItem_Engine_InitNatives()
 {
-	CreateNative("RPG_GetItemIdByShortname",Native_RPG_GetItemIdByShortname);
+	CreateNative("RPG_GetItemIdByBuyname",Native_RPG_GetItemIdByBuyname);
 
 	CreateNative("RPG_GetItemsLoaded",Native_GetItemsLoaded);
 
@@ -311,3 +311,24 @@ stock bool:RPG_TryToBuyItem(client,item,bool:reshowmenu=true)
 	g_hItemBuffValue = CreateArray(1);
 */
 
+stock internal_RPG_GetItemIdByBuyname(String:ret[],maxlen,translatedfor=0)
+{
+	decl String:itemShortName[16],String:TmpBuffer[16];
+	Format(itemShortName,sizeof(itemShortName), "%T", itemShortName, translatedfor);
+	for(new i = 0; i < GetArraySize(g_hItemNumber); i++)
+	{
+		GetArrayString(g_hItemBuyName, i, TmpBuffer, sizeof(TmpBuffer));
+		if(StrEqual(itemShortName,TmpBuffer))
+		{
+			break;
+		}
+	}
+	return i;
+}
+
+public Native_RPG_GetItemIdByBuyname(Handle:plugin,numParams)
+{
+	new String:TMPbuffer[16];
+	GetNativeString(1, TMPbuffer, sizeof(TMPbuffer));
+	return internal_RPG_GetItemIdByBuyname(TMPbuffer,GetNativeCell(2),GetNativeCell(3));
+}
