@@ -8,19 +8,23 @@ public TF2_RPG_ShopItem_Engine_OnPluginStart()
 {
 	LoadTranslations("tf2_rpg.shopmenu.phrases.txt");
 	LoadTranslations("tf2_rpg.item_categories.phrases.txt");
+}
 
+/*
 	g_hItemNumber = CreateArray(1);
 	g_h_ItemCategorys = CreateArray(ByteCountToCells(64)); //string
 	g_hItemPluginName = CreateArray(ByteCountToCells(64)); //string
+	g_hItemTranslationFile = CreateArray(ByteCountToCells(64)); //string
 	g_hItemLongName = CreateArray(ByteCountToCells(32)); //string
 	g_hItemShortDesc = CreateArray(ByteCountToCells(32)); //string
 	g_hItemLongDesc = CreateArray(ByteCountToCells(192)); //string
 	g_hItemCost = CreateArray(1);
 	g_hItemClass = CreateArray(1);
 	g_hItemBuyName = CreateArray(ByteCountToCells(16)); //string
+	g_hItemTeam = CreateArray(1);
 	g_hItemBuffName = CreateArray(ByteCountToCells(16)); //string
-	g_hItemValue = CreateArray(1);
-}
+	g_hItemBuffValue = CreateArray(1);
+*/
 
 /*
  * Theory:  probably do not need this function, will probably just load the whole configuration and
@@ -39,6 +43,22 @@ public OnRegisterShopItem(const String:plugin_name[], const String:item_long_nam
 	}
 }*/
 
+public TF2_RPG_ShopItem_Engine_InitNatives()
+{
+	CreateNative("RPG_GetItemIdByShortname",Native_RPG_GetItemIdByShortname);
+
+	CreateNative("RPG_GetItemsLoaded",Native_GetItemsLoaded);
+
+	CreateNative("RPG_GetItemName",Native_RPG_GetItemName);
+	CreateNative("RPG_GetItemShortname",Native_RPG_GetItemShortname);
+	CreateNative("RPG_GetItemShortdesc",Native_RPG_GetItemShortdesc);
+	CreateNative("RPG_GetItemDescription",Native_RPG_GetItemDescription);
+
+	CreateNative("RPG_GetItemCost",Native_RPG_GetItemCost);
+
+	CreateNative("RPG_GetItemCategory",Native_RPG_GetItemCategory);
+}
+
 public TF2_RPG_ShopItem_Engine_Forwards()
 {
 	//
@@ -46,6 +66,10 @@ public TF2_RPG_ShopItem_Engine_Forwards()
 	g_hOnItemPurchase		= CreateGlobalForward("OnItemPurchase", ET_Hook, Param_String, Param_Cell, Param_String, Param_Cell);
 	g_hOnItemLost			= CreateGlobalForward("OnItemLost", ET_Hook, Param_String, Param_Cell, Param_String, Param_Cell);
 }
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+// SHOPMENU
+///////////////////////////////////////////////////////////////////////////////////////////////////
 
 ShowMenuShopCategory(client)
 {
@@ -266,3 +290,24 @@ stock bool:RPG_TryToBuyItem(client,item,bool:reshowmenu=true)
 
 	return false;
 }
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+// NATIVES
+///////////////////////////////////////////////////////////////////////////////////////////////////
+
+/*
+	g_hItemNumber = CreateArray(1);
+	g_h_ItemCategorys = CreateArray(ByteCountToCells(64)); //string
+	g_hItemPluginName = CreateArray(ByteCountToCells(64)); //string
+	g_hItemTranslationFile = CreateArray(ByteCountToCells(64)); //string
+	g_hItemLongName = CreateArray(ByteCountToCells(32)); //string
+	g_hItemShortDesc = CreateArray(ByteCountToCells(32)); //string
+	g_hItemLongDesc = CreateArray(ByteCountToCells(192)); //string
+	g_hItemCost = CreateArray(1);
+	g_hItemClass = CreateArray(1);
+	g_hItemBuyName = CreateArray(ByteCountToCells(16)); //string
+	g_hItemTeam = CreateArray(1);
+	g_hItemBuffName = CreateArray(ByteCountToCells(16)); //string
+	g_hItemBuffValue = CreateArray(1);
+*/
+
