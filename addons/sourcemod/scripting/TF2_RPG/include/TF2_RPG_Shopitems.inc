@@ -55,7 +55,7 @@ forward OnItemLost(ItemIndex, const String:plugin_name[], client, const String:b
  * @param translatedfor		client or 0 for server engine default translation
  * @return					item index
  */
-native RPG_GetItemIdByShortname(String:ret[],maxlen,translatedfor=0);
+native RPG_GetItemIdByBuyname(String:ret[],maxlen,translatedfor=0);
 
 /**
  * Gets item name by item index
