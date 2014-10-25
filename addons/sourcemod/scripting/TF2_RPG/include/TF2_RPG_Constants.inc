@@ -18,6 +18,19 @@ enum TFClassType
 	TFClass_Engineer
 };*/
 
+stock const String:TFClassTypeString[][] = {
+					"all",
+					"scout",
+					"sniper",
+					"soldier",
+					"demoman",
+					"medic",
+					"heavy",
+					"pyro",
+					"spy",
+					"engineer"
+};
+
 #define MAXCLASSES 10 // there is actually 9, but need 10 because of the "unknown" variable in TFClassType
 
 #define PLUGIN_TAG "{green}[TF2RPG]{default}"
