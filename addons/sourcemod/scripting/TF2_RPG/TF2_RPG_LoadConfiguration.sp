@@ -163,6 +163,21 @@ public bool:Load_ITEMS_ConfigurationFile()
 
 	new bool:found=false;
 
+	//NO ITEM ZERO
+	PushArrayCell(g_hItemNumber, GetArraySize(g_hItemNumber)+1);
+	PushArrayString(g_hItemPluginName, "zero item");
+	PushArrayString(g_h_ItemCategorys, "zero item");
+	PushArrayString(g_hItemTranslationFile, "zero item");
+	PushArrayString(g_hItemLongName, "zero item");
+	PushArrayString(g_hItemShortDesc, "zero item");
+	PushArrayString(g_hItemLongDesc, "zero item");
+	PushArrayCell(g_hItemCost, 0);
+	PushArrayCell(g_hItemClass, 0);
+	PushArrayString(g_hItemBuyName, "zero item");
+	PushArrayCell(g_hItemTeam, 0);
+	PushArrayString(g_hItemBuffName, "zero item");
+	PushArrayCell(g_hItemBuffValue, 0);
+
 	do
 	{
 		// You can read the section/key name by using KvGetSectionName here.
