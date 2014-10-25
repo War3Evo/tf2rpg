@@ -11,6 +11,7 @@ public TF2_RPG_ShopItem_Engine_OnPluginStart()
 
 	g_hItemNumber = CreateArray(1);
 	g_h_ItemCategorys = CreateArray(ByteCountToCells(64)); //string
+	g_hItemPluginName = CreateArray(ByteCountToCells(32)); //string
 	g_hItemLongName = CreateArray(ByteCountToCells(32)); //string
 	g_hItemShortDesc = CreateArray(ByteCountToCells(32)); //string
 	g_hItemLongDesc = CreateArray(ByteCountToCells(192)); //string
@@ -38,9 +39,12 @@ public OnRegisterShopItem(const String:plugin_name[], const String:item_long_nam
 	}
 }*/
 
-public TF2_RPG_Item_InitNatives()
+public TF2_RPG_ShopItem_Engine_Forwards()
 {
 	//
+	g_hOnCanPurchaseItem	= CreateGlobalForward("OnCanPurchaseItem", ET_Hook, Param_String, Param_Cell, Param_String, Param_Cell);
+	g_hOnItemPurchase		= CreateGlobalForward("OnItemPurchase", ET_Hook, Param_String, Param_Cell, Param_String, Param_Cell);
+	g_hOnItemLost			= CreateGlobalForward("OnItemLost", ET_Hook, Param_String, Param_Cell, Param_String, Param_Cell);
 }
 
 ShowMenuShopCategory(client)
@@ -95,6 +99,26 @@ ShowMenuShopCategory(client)
 	DisplayMenu(shopMenu,client,20);
 }
 
+public RPG_ShopMenuCategory_Sel(Handle:menu, MenuAction:action, client, selection)
+{
+	if(action==MenuAction_Select)
+	{
+		if(ValidPlayer(client))
+		{
+			decl String:SelectionInfo[64];
+			decl String:SelectionDispText[256];
+			new SelectionStyle;
+			GetMenuItem(menu, selection, SelectionInfo, sizeof(SelectionInfo), SelectionStyle, SelectionDispText,sizeof(SelectionDispText));
+
+			ShowMenuShop(client, SelectionInfo);
+		}
+	}
+	if(action==MenuAction_End)
+	{
+		CloseHandle(menu);
+	}
+}
+
 ShowMenuShop(client, const String:category[]="")
 {
 	new Handle:shopMenu=CreateMenu(RPG_ShopMenu_Selected);
@@ -118,12 +142,12 @@ ShowMenuShop(client, const String:category[]="")
 	new String:itemcategory[64];
 	new String:itemshortdesc[256];
 	new cost;
-	new bool:useCategory = GetConVarBool(hUseCategorysCvar);
+	//new bool:useCategory = GetConVarBool(hUseCategorysCvar);
 	//new BackButton=0;
-	if (useCategory)
-	{
-		AddMenuItem(shopMenu,"-1","[Return to Categories]");
-	}
+	//if (useCategory)
+	//{
+	AddMenuItem(shopMenu,"-1","[Return to Categories]");
+	//}
 
 	for(new i = 0; i < GetArraySize(g_hItemNumber); i++)
 	{
@@ -135,7 +159,11 @@ ShowMenuShop(client, const String:category[]="")
 			if (StrEqual(category, itemcategory))
 			{
 				// add item
+				GetArrayString(g_hItemLongName, i, itemcategory, sizeof(itemcategory));
+
 				Format(linestr,sizeof(linestr), "%T", itemcategory, client);
+
+				Format(itembuf,sizeof(itembuf),"%d",i);
 
 				AddMenuItem(shopMenu,itembuf,linestr,ITEMDRAW_DEFAULT);
 			}
@@ -143,4 +171,98 @@ ShowMenuShop(client, const String:category[]="")
 	}
 
 	DisplayMenu(shopMenu,client,20);
+}
+
+public War3Source_ShopMenu_Selected(Handle:menu,MenuAction:action,client,selection)
+{
+	if(action==MenuAction_Select)
+	{
+		if(ValidPlayer(client))
+		{
+			decl String:SelectionInfo[4];
+			decl String:SelectionDispText[256];
+			new SelectionStyle;
+			GetMenuItem(menu,selection,SelectionInfo,sizeof(SelectionInfo),SelectionStyle, SelectionDispText,sizeof(SelectionDispText));
+			new item=StringToInt(SelectionInfo);
+			new bool:useCategory = GetConVarBool(hUseCategorysCvar);
+			//if(item==-1&&useCategory)
+			if(item==-1)
+			{
+				ShowMenuShopCategory(client);
+			}
+			else
+			{
+				RPG_TryToBuyItem(client,item,true);
+			}
+
+		}
+	}
+	if(action==MenuAction_End)
+	{
+		CloseHandle(menu);
+	}
+}
+
+stock bool:RPG_TryToBuyItem(client,item,bool:reshowmenu=true)
+{
+	if(item>=GetArraySize(g_hItemNumber))
+	{
+		LogError("item>=GetArraySize(g_hItemNumber) item = %d and other = %d",item,GetArraySize(g_hItemNumber));
+		return false;
+	}
+
+	new credits=GetPlayerProp(client,iPlayerMoney);
+
+/*
+	g_hItemNumber = CreateArray(1);
+	g_h_ItemCategorys = CreateArray(ByteCountToCells(64)); //string
+	g_hItemPluginName = CreateArray(ByteCountToCells(32)); //string
+	g_hItemLongName = CreateArray(ByteCountToCells(32)); //string
+	g_hItemShortDesc = CreateArray(ByteCountToCells(32)); //string
+	g_hItemLongDesc = CreateArray(ByteCountToCells(192)); //string
+	g_hItemCost = CreateArray(1);
+	g_hItemClass = CreateArray(1);
+	g_hItemBuyName = CreateArray(ByteCountToCells(16)); //string
+	g_hItemBuffName = CreateArray(ByteCountToCells(16)); //string
+	g_hItemValue = CreateArray(1);
+*/
+	decl String:sPluginName[32];
+	decl String:BuffName[16];
+
+	GetArrayString(g_hItemPluginName, item, sPluginName, sizeof(sPluginName));
+	GetArrayString(g_hItemBuffName, item, BuffName, sizeof(BuffName));
+
+	new any:BuffValue=GetArrayCell(g_hItemValue, item);
+
+	new Action:returnblocking=Plugin_Continue;
+	Call_StartForward(g_hOnCanPurchaseItem);
+	Call_PushCell(item);
+	Call_PushString(sPluginName);
+	Call_PushCell(client);
+	Call_PushString(BuffName);
+	Call_PushCell(BuffValue);
+	Call_Finish(Action:returnVal);
+	if(returnVal != Plugin_Continue)
+	{
+		return false;
+	}
+
+	returnblocking=Plugin_Continue;
+	Call_StartForward(g_hOnItemPurchase);
+	Call_PushCell(item);
+	Call_PushString(sPluginName);
+	Call_PushCell(client);
+	Call_PushString(BuffName);
+	Call_PushCell(BuffValue);
+	Call_Finish(Action:returnVal);
+	if(returnVal == Plugin_Handled)
+	{
+		decl String:itemname[32];
+		GetArrayString(g_hItemLongName, item, itemname, sizeof(itemname));
+
+		RPG_ChatMessage(client,"%T","You have successfully purchased {itemname}", client, itemname);
+		return true;
+	}
+
+	return false;
 }

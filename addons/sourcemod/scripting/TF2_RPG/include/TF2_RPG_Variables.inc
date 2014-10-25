@@ -42,6 +42,7 @@ new Handle:g_hLevel_Progression;
 
 new Handle:g_hItemNumber;
 new Handle:g_h_ItemCategorys;
+new Handle:g_hItemPluginName;
 new Handle:g_hItemLongName;
 new Handle:g_hItemShortDesc;
 new Handle:g_hItemLongDesc;
@@ -50,4 +51,8 @@ new Handle:g_hItemClass;
 new Handle:g_hItemBuyName;
 new Handle:g_hItemBuffName;
 new Handle:g_hItemValue;
+// fowards
+new Handle:g_hOnCanPurchaseItem;
+new Handle:g_hOnItemPurchase;
+new Handle:g_hOnItemLost;
 
