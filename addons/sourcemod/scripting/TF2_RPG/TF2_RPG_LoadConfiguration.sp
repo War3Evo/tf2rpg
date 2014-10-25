@@ -35,7 +35,7 @@ stock AddArray(Handle:handleArray, TheArray[2])
 	return -1;
 }
 
-public bool:LoadConfigurationFile()
+public bool:Load_XP_ConfigurationFile()
 {
 	decl String:path[1024];
 
@@ -43,6 +43,76 @@ public bool:LoadConfigurationFile()
 
 	/* Return true if an update was available. */
 	new Handle:kv = CreateKeyValues("TF2_RPG_XP");
+
+	if (!FileToKeyValues(kv, path))
+	{
+		CloseHandle(kv);
+		return false;
+	}
+
+	ClearArray(g_hWeaponsXP);
+	ClearArray(g_hLevel_Progression);
+
+	new String:sBuffer[16];
+
+	new KvArray[2];
+
+	if (KvJumpToKey(kv, "level_progression"))
+	{
+		if (KvGotoFirstSubKey(kv, false))
+		{
+			do
+			{
+				KvGetSectionName(kv, sBuffer, sizeof(sBuffer));
+
+				KvArray[0] = StringToInt(sBuffer);
+
+				KvArray[1] = KvGetNum(kv, NULL_STRING);
+
+				AddArray(g_hLevel_Progression, KvArray);
+
+			} while (KvGotoNextKey(kv, false));
+			KvGoBack(kv);
+		}
+
+		KvGoBack(kv);
+	}
+
+	if (KvJumpToKey(kv, "weapons"))
+	{
+		if (KvGotoFirstSubKey(kv, false))
+		{
+			do
+			{
+				KvGetSectionName(kv, sBuffer, sizeof(sBuffer));
+
+				KvArray[0] = StringToInt(sBuffer);
+
+				KvArray[1] = KvGetNum(kv, NULL_STRING);
+
+				AddArray(g_hWeaponsXP, KvArray);
+
+			} while (KvGotoNextKey(kv, false));
+			KvGoBack(kv);
+		}
+
+		KvGoBack(kv);
+	}
+	CloseHandle(kv);
+
+	return true;
+}
+
+
+// not complete yet
+public bool:Load_ITEMS_ConfigurationFile()
+{
+	decl String:path[1024];
+
+	BuildPath(Path_SM,path,sizeof(path),"configs/tf2_rpg_shopitems.cfg");
+
+	/* Return true if an update was available. */
+	new Handle:kv = CreateKeyValues("TF2_RPG_SHOPMENU1");
 
 	if (!FileToKeyValues(kv, path))
 	{
