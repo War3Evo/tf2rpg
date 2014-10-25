@@ -7,14 +7,19 @@
 		"#format" "{1:d},{2:d}"
 		"en" "[TF2 RPG] Browse the itemshop. You have {1}/{2} items"
 	}
-	"Your current balance: {amount}/{maxamount} "
+	"Your current balance: {amount}/{maxamount}"
 	{
 		"#format"   "{1:d},{2:d}"
-		"en"        "Your current balance: {1}/{2} "
+		"en"        "Your current balance: {1}/{2}"
 	}
 	"You have successfully purchased {itemname}"
 	{
 		"#format"   "{1:s}"
-		"en"        "You have successfully purchased {1} "
+		"en"        "You have successfully purchased {1}"
+	}
+	"You cannot afford {itemname}"
+	{
+		"#format"   "{1:s}"
+		"en"        "You cannot afford {1}"
 	}
 }
