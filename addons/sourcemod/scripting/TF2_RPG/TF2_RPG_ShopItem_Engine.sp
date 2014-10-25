@@ -11,7 +11,7 @@ public TF2_RPG_ShopItem_Engine_OnPluginStart()
 
 	g_hItemNumber = CreateArray(1);
 	g_h_ItemCategorys = CreateArray(ByteCountToCells(64)); //string
-	g_hItemPluginName = CreateArray(ByteCountToCells(32)); //string
+	g_hItemPluginName = CreateArray(ByteCountToCells(64)); //string
 	g_hItemLongName = CreateArray(ByteCountToCells(32)); //string
 	g_hItemShortDesc = CreateArray(ByteCountToCells(32)); //string
 	g_hItemLongDesc = CreateArray(ByteCountToCells(192)); //string
@@ -213,20 +213,7 @@ stock bool:RPG_TryToBuyItem(client,item,bool:reshowmenu=true)
 
 	new credits=GetPlayerProp(client,iPlayerMoney);
 
-/*
-	g_hItemNumber = CreateArray(1);
-	g_h_ItemCategorys = CreateArray(ByteCountToCells(64)); //string
-	g_hItemPluginName = CreateArray(ByteCountToCells(32)); //string
-	g_hItemLongName = CreateArray(ByteCountToCells(32)); //string
-	g_hItemShortDesc = CreateArray(ByteCountToCells(32)); //string
-	g_hItemLongDesc = CreateArray(ByteCountToCells(192)); //string
-	g_hItemCost = CreateArray(1);
-	g_hItemClass = CreateArray(1);
-	g_hItemBuyName = CreateArray(ByteCountToCells(16)); //string
-	g_hItemBuffName = CreateArray(ByteCountToCells(16)); //string
-	g_hItemValue = CreateArray(1);
-*/
-	decl String:sPluginName[32];
+	decl String:sPluginName[64];
 	decl String:BuffName[16];
 
 	GetArrayString(g_hItemPluginName, item, sPluginName, sizeof(sPluginName));
