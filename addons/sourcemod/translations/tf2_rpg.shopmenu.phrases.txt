@@ -12,4 +12,9 @@
 		"#format"   "{1:d},{2:d}"
 		"en"        "Your current balance: {1}/{2} "
 	}
+	"You have successfully purchased {itemname}"
+	{
+		"#format"   "{1:s}"
+		"en"        "You have successfully purchased {1} "
+	}
 }
