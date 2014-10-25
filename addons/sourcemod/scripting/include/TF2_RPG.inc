@@ -113,18 +113,33 @@ forward Action:OnRPGSayAllChatPre(client,String:ChatString[192]);
 
 /**
  *
+ * @param ItemIndex				This index will change when you restart server or reload shop items
  * @param plugin_name			the plugin name without path and extension
  * @param client				client index.
  * @param buff_name				the name of the buff
  * @param value					any value
  *
- * @return						return Plugin_Handled if player can purchase item.
+ * @return						return Plugin_Handled if denied purchase.
  *
  */
-forward Action:OnItemPurchase(const String:plugin_name[], client, const String:buff_name[], any:value)
+forward Action:OnCanPurchaseItem(ItemIndex, const String:plugin_name[], client, const String:buff_name[], any:value)
 
 /**
  *
+ * @param ItemIndex				This index will change when you restart server or reload shop items
+ * @param plugin_name			the plugin name without path and extension
+ * @param client				client index.
+ * @param buff_name				the name of the buff
+ * @param value					any value
+ *
+ * @return						return Plugin_Handled if plugin accepted purchase.
+ *
+ */
+forward Action:OnItemPurchase(ItemIndex, const String:plugin_name[], client, const String:buff_name[], any:value)
+
+/**
+ *
+ * @param ItemIndex				This index will change when you restart server or reload shop items
  * @param plugin_name			the plugin name without path and extension
  * @param client				client index.
  * @param buff_name				the name of the buff
@@ -133,7 +148,7 @@ forward Action:OnItemPurchase(const String:plugin_name[], client, const String:b
  * @noreturn
  *
  */
-forward OnItemLost(const String:plugin_name[], client, const String:buff_name[], any:value)
+forward OnItemLost(ItemIndex, const String:plugin_name[], client, const String:buff_name[], any:value)
 
 /*
  * STOCKS STOCKS STOCKS STOCKS STOCKS STOCKS STOCKS STOCKS STOCKS STOCKS STOCKS STOCKS STOCKS STOCKS STOCKS STOCKS STOCKS STOCKS STOCKS STOCKS
