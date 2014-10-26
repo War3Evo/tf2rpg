@@ -155,3 +155,13 @@ native bool:RPG_GetItemCategory(itemid,String:ret[],maxlen=64,translatedfor=0);
  * @return					the class of the item
  */
 native TFClassType:RPG_GetItemClass(itemid);
+
+/**
+ * Gets the item team number.
+ *
+ * Note: This native should not be called before OnMapStart.
+ *
+ * @param itemid			The item that you want the team of.
+ * @return					the team of the item
+ */
+native RPG_GetItemTeam(itemid);
