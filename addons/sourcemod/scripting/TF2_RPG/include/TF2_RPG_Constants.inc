@@ -8,6 +8,9 @@
 
 #define MAXITEMS 10 // Max number of items a player can hold
 
+#define TEAM_BLUE 3
+#define TEAM_RED 2
+
 /*
 enum TFClassType
 {
