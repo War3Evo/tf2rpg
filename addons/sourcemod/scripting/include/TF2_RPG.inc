@@ -9,6 +9,8 @@
 #include "TF2_RPG/include/TF2_RPG_PlayerProp.inc"
 #include "TF2_RPG/include/TF2_RPG_Shopitems.inc"
 
+#include <morecolors>
+
 // natives natives natives natives natives natives natives natives natives natives natives natives natives natives
 // natives natives natives natives natives natives natives natives natives natives natives natives natives natives
 // natives natives natives natives natives natives natives natives natives natives natives natives natives natives
@@ -274,7 +276,7 @@ stock GetPluginName(String:buffer[],maxlength)
 {
 	decl String:pluginName[80];
 	GetPluginFilename(INVALID_HANDLE, pluginName, maxlength);
-	File_GetFileName(pluginName, pluginName, maxlength)
+	File_GetFileName(pluginName, pluginName, maxlength);
 	ReplaceString(pluginName, maxlength, ".smx", "", false);
 	strcopy(buffer, 80, pluginName);
 }
