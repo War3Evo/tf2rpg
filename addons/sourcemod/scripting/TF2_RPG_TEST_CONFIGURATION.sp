@@ -17,6 +17,7 @@ public Plugin:myinfo=
 	url = "http://www.war3evo.info/"
 };
 
+new ItemsLoaded=0;
 
 new Handle:g_hWeaponsXP;
 new Handle:g_hLevel_Progression;
@@ -131,7 +132,7 @@ public Action:RPG_TESTING_CONFIG(client,args)
 
 		new String:TmpBuffer[192];
 
-		for(new i = 0; i < GetArraySize(g_hItemNumber); i++)
+		for(new i = 0; i <= ItemsLoaded; i++)
 		{
 			/*
 			g_hItemNumber = CreateArray(1);
@@ -441,6 +442,7 @@ public bool:Load_ITEMS_ConfigurationFile()
 	} while (KvGotoNextKey(kv, false));
 
 	//PrintToChatAll("Finished");
+	ItemsLoaded = GetArraySize(g_hItemNumber) - 1;
 
 	CloseHandle(kv);
 
