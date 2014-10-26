@@ -74,13 +74,13 @@ public APLRes:AskPluginLoad2(Handle:plugin,bool:late,String:error[],err_max)
 {
 	PrintToServer("");
 	PrintToServer("");
-	PrintToServer("######## ########  #######     ########  ########   ######   ");
-	PrintToServer("   ##    ##       ##     ##    ##     ## ##     ## ##    ##  ");
-	PrintToServer("   ##    ##              ##    ##     ## ##     ## ##        ");
-	PrintToServer("   ##    ######    #######     ########  ########  ##   #### ");
-	PrintToServer("   ##    ##       ##           ##   ##   ##        ##    ##  ");
-	PrintToServer("   ##    ##       ##           ##    ##  ##        ##    ##  ");
-	PrintToServer("   ##    ##       #########    ##     ## ##         ######   ");
+	PrintToServer("####### #######  #####  ######  ######   ##### ");
+	PrintToServer("   #    #       #     # #     # #     # #     #");
+	PrintToServer("   #    #             # #     # #     # #      ");
+	PrintToServer("   #    #####    #####  ######  ######  #  ####");
+	PrintToServer("   #    #       #       #   #   #       #     #");
+	PrintToServer("   #    #       #       #    #  #       #     #");
+	PrintToServer("   #    #       ####### #     # #        ##### ");
 	PrintToServer("");
 	PrintToServer("");
 
