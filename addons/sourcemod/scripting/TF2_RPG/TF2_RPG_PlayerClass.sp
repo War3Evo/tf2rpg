@@ -30,6 +30,12 @@ public TF2_RPG_PlayerClass_InitNatives()
 	CreateNative("RPG_GetOwnsItem",Native_RPG_GetOwnsItem);
 }
 
+public TF2_RPG_PlayerClass_Forwards()
+{
+	g_hOnItemGain			= CreateGlobalForward("OnItemGain", ET_Hook, Param_String, Param_Cell, Param_String, Param_Cell);
+	g_hOnItemLost			= CreateGlobalForward("OnItemLost", ET_Hook, Param_String, Param_Cell, Param_String, Param_Cell);
+}
+
 stock SetLevel(client,class,level)
 {
 	if (client > 0 && client <= MaxClients && class > 0 && class < MAXCLASSES)
@@ -138,32 +144,42 @@ stock bool:xRPG_GetOwnsItem(client, itemid)
 	return false;
 }
 
-native Native_RPG_GetOwnsItem(Handle:plugin,numParams)
+public Native_RPG_GetOwnsItem(Handle:plugin,numParams)
 {
 	if(numParams<2) return false;
 	return xRPG_GetOwnsItem(GetNativeCell(1), GetNativeCell(2));
 }
 
-stock xRPG_SetOwnsItem(client, itemid, bool:OwnsItem)
+stock xRPG_SetOwnsItem(client, itemid, bool:SetOwnsItem)
 {
 	if(client<0 || client>MaxClients) return 0;
 	if(itemid<=0 || itemid>ItemsLoaded) return 0;
-	if(OwnsItem && xRPG_GetOwnsItem(client, itemid)==false)
+	if(SetOwnsItem==true && xRPG_GetOwnsItem(client, itemid)==false)
 	{
 		for(new i=0; i<=MaxAllowedItems; i++)
 		{
 			if(playerOwnsItem[client][i]==-1)
 			{
 				playerOwnsItem[client][i]=itemid;
+
+				Call_StartForward(g_hOnItemGain);
+				Call_PushCell(client);
+				Call_PushCell(itemid);
+				Call_Finish(dummy);
 			}
 		}
 	}
-	else if(!OwnsItem)
+	else if(SetOwnsItem==false)
 	{
 		for(new i=0; i<=MaxAllowedItems; i++)
 		{
 			if(playerOwnsItem[client][i]==itemid)
 			{
+				Call_StartForward(g_hOnItemLost);
+				Call_PushCell(client);
+				Call_PushCell(itemid);
+				Call_Finish(dummy);
+
 				playerOwnsItem[client][i]=-1;
 			}
 		}
@@ -171,8 +187,8 @@ stock xRPG_SetOwnsItem(client, itemid, bool:OwnsItem)
 	return 1;
 }
 
-native Native_RPG_SetOwnsItem(Handle:plugin,numParams)
+public Native_RPG_SetOwnsItem(Handle:plugin,numParams)
 {
-	if(numParams<3) return false;
+	if(numParams<3) return;
 	xRPG_SetOwnsItem(GetNativeCell(1), GetNativeCell(2), bool:GetNativeCell(3));
 }
