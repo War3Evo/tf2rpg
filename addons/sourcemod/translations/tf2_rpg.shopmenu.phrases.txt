@@ -2,24 +2,33 @@
 {
 	//TF2_RPG_ShopItem_Engine.sp
 
-	"[TF2 RPG] Browse the itemshop. You have {amount}/{amount} items"
+	"[TF2RPG] Browse the itemshop. You have {amount}/{amount} items"
 	{
-		"#format" "{1:d},{2:d}"
-		"en" "[TF2 RPG] Browse the itemshop. You have {1}/{2} items"
+		"#format"		"{1:d},{2:d}"
+		"en"			"[TF2RPG] Browse the itemshop. You have {1}/{2} items"
 	}
 	"Your current balance: {amount}/{maxamount}"
 	{
-		"#format"   "{1:d},{2:d}"
-		"en"        "Your current balance: {1}/{2}"
+		"#format"		"{1:d},{2:d}"
+		"en"			"Your current balance: {1}/{2}"
 	}
 	"You have successfully purchased {itemname}"
 	{
-		"#format"   "{1:s}"
-		"en"        "You have successfully purchased {1}"
+		"#format"		"{1:s}"
+		"en"			"You have successfully purchased {1}"
 	}
 	"You cannot afford {itemname}"
 	{
-		"#format"   "{1:s}"
-		"en"        "You cannot afford {1}"
+		"#format"		"{1:s}"
+		"en"			"You cannot afford {1}"
+	}
+	"[TF2RPG] Shopmenu items"
+	{
+		"en"			"[TF2RPG] Shopmenu items"
+	}
+	"[TF2RPG] Item: {item} (Buy Name: {buyname})"
+	{
+		"#format"		"{1:s},{2:s}"
+		"en"			"[TF2RPG] Item: {1} (Buy Name: {2})"
 	}
 }
