@@ -47,7 +47,7 @@ new MaxAllowedItems = MAXITEMS-1;
 new Handle:g_hItemNumber;
 new Handle:g_h_ItemCategorys;
 new Handle:g_hItemPluginName;
-new Handle:g_hItemTranslationFile;
+//new Handle:g_hItemTranslationFile;
 new Handle:g_hItemLongName;
 new Handle:g_hItemShortDesc;
 new Handle:g_hItemLongDesc;

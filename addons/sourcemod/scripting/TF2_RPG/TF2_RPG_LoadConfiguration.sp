@@ -17,7 +17,7 @@ stock TF2_RPG_LoadConfiguration_OnPluginStart()
 	g_hItemNumber = CreateArray(1);
 	g_h_ItemCategorys = CreateArray(ByteCountToCells(64)); //string
 	g_hItemPluginName = CreateArray(ByteCountToCells(64)); //string
-	g_hItemTranslationFile = CreateArray(ByteCountToCells(64)); //string
+	//g_hItemTranslationFile = CreateArray(ByteCountToCells(64)); //string
 	g_hItemLongName = CreateArray(ByteCountToCells(32)); //string
 	g_hItemShortDesc = CreateArray(ByteCountToCells(32)); //string
 	g_hItemLongDesc = CreateArray(ByteCountToCells(192)); //string
@@ -148,7 +148,7 @@ public bool:Load_ITEMS_ConfigurationFile()
 	ClearArray(g_hItemNumber);
 	ClearArray(g_h_ItemCategorys);
 	ClearArray(g_hItemPluginName);
-	ClearArray(g_hItemTranslationFile);
+	//ClearArray(g_hItemTranslationFile);
 	ClearArray(g_hItemLongName);
 	ClearArray(g_hItemShortDesc);
 	ClearArray(g_hItemLongDesc);
@@ -170,7 +170,7 @@ public bool:Load_ITEMS_ConfigurationFile()
 	PushArrayCell(g_hItemNumber, GetArraySize(g_hItemNumber)+1);
 	PushArrayString(g_hItemPluginName, "zero item");
 	PushArrayString(g_h_ItemCategorys, "zero item");
-	PushArrayString(g_hItemTranslationFile, "zero item");
+	//PushArrayString(g_hItemTranslationFile, "zero item");
 	PushArrayString(g_hItemLongName, "zero item");
 	PushArrayString(g_hItemShortDesc, "zero item");
 	PushArrayString(g_hItemLongDesc, "zero item");
@@ -215,7 +215,10 @@ public bool:Load_ITEMS_ConfigurationFile()
 								else if(StrEqual(sSubKeyBuffer,"translation_file"))
 								{
 									KvGetString(kv, NULL_STRING, sTempBuffer, sizeof(sTempBuffer));
-									PushArrayString(g_hItemTranslationFile, sTempBuffer);
+									//PushArrayString(g_hItemTranslationFile, sTempBuffer);
+
+									// Load Translation files for shop items
+									LoadTranslations(sTempBuffer);
 								}
 								else if(StrEqual(sSubKeyBuffer,"item_long_name"))
 								{
@@ -316,7 +319,7 @@ public bool:Load_ITEMS_ConfigurationFile()
 
 	// Make sure we loaded the configuration file correctly
 	if(GetArraySize(g_h_ItemCategorys)==GetArraySize(g_hItemPluginName)
-	&&GetArraySize(g_h_ItemCategorys)==GetArraySize(g_hItemTranslationFile)
+	//&&GetArraySize(g_h_ItemCategorys)==GetArraySize(g_hItemTranslationFile)
 	&&GetArraySize(g_h_ItemCategorys)==GetArraySize(g_hItemLongName)
 	&&GetArraySize(g_h_ItemCategorys)==GetArraySize(g_hItemShortDesc)
 	&&GetArraySize(g_h_ItemCategorys)==GetArraySize(g_hItemLongDesc)
