@@ -324,6 +324,8 @@ public bool:Load_ITEMS_ConfigurationFile()
 	&&GetArraySize(g_h_ItemCategorys)==GetArraySize(g_hItemBuffName)
 	&&GetArraySize(g_h_ItemCategorys)==GetArraySize(g_hItemBuffValue))
 	{
+		ItemsLoaded = GetArraySize(g_hItemNumber) - 1;
+
 		return true;
 	}
 	return false;
