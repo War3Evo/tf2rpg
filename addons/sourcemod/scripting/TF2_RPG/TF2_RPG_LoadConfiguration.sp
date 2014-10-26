@@ -9,7 +9,7 @@ public Plugin:myinfo=
 	version=VERSION_NUM,
 };
 
-public TF2_RPG_LoadConfiguration_OnPluginStart()
+stock TF2_RPG_LoadConfiguration_OnPluginStart()
 {
 	g_hWeaponsXP = CreateArray(2);
 	g_hLevel_Progression = CreateArray(2);
@@ -27,7 +27,10 @@ public TF2_RPG_LoadConfiguration_OnPluginStart()
 	g_hItemTeam = CreateArray(ByteCountToCells(16)); //string
 	g_hItemBuffName = CreateArray(ByteCountToCells(16)); //string
 	g_hItemBuffValue = CreateArray(1);
+}
 
+stock TF2_RPG_LoadConfiguration_OnAllPluginsLoaded()
+{
 	Load_XP_ConfigurationFile();
 
 	if(!Load_ITEMS_ConfigurationFile())
