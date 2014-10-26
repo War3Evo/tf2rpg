@@ -148,3 +148,10 @@ public OnMapEnd()
 	// Call Functions for OnMapEnd() here
 }
 
+//=============================================================================
+// OnClientPutInServer
+//=============================================================================
+public OnClientPutInServer(client)
+{
+	xRPG_ClearAllOwnsItem(client);
+}
