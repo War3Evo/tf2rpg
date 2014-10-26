@@ -59,6 +59,8 @@ public TF2_RPG_ShopItem_Engine_InitNatives()
 	CreateNative("RPG_GetItemCategory",Native_RPG_GetItemCategory);
 
 	CreateNative("RPG_GetItemClass",Native_RPG_GetItemClass);
+
+	CreateNative("RPG_GetItemTeam",Native_RPG_GetItemTeam);
 }
 
 public TF2_RPG_ShopItem_Engine_Forwards()
@@ -370,10 +372,11 @@ public ShowMenuItemsinfo2(client,itemnum)
 	new Handle:itemsinfoMenu=CreateMenu(ShowMenuItemsinfo2Selected);
 	SetMenuExitButton(itemsinfoMenu,true);
 
-	decl String:linestr[256];
+	decl String:linestr[300];
 	decl String:itemname[64];
 	decl String:buyname[16];
 	decl String:itemDescription[192];
+	decl String:itemTeamname[16];
 
 	xRPG_GetItemName(itemnum,itemname,sizeof(itemname),client);
 	xRPG_GetItemBuyname(itemnum,buyname,sizeof(buyname));
@@ -381,6 +384,14 @@ public ShowMenuItemsinfo2(client,itemnum)
 
 	//Format(str,sizeof(str),"%T\n%s","[War3Evo] Item: {item} (identifier: {id})",client,str,shortname,str2);
 	Format(linestr,sizeof(linestr),"%T","[TF2RPG] Item: {item} (Buy Name: {buyname})",client,itemname,buyname);
+
+	xRPG_GetTeamName(xRPG_GetItemTeam(itemnum), itemTeamname, sizeof(itemTeamname));
+
+	Format(linestr,sizeof(linestr),"%s\nTeam: %s",linestr,itemTeamname);
+
+	new _:ClassName = _:xRPG_GetItemClass(itemnum);
+
+	Format(linestr,sizeof(linestr),"%s\nClass: %s",linestr,TFClassTypeString[ClassName]);
 
 	Format(linestr,sizeof(linestr),"%s\n%s",linestr,itemDescription);
 
@@ -530,6 +541,37 @@ public Native_RPG_GetItemCost(Handle:plugin,numParams)
 {
 	if(numParams<1) return 0;
 	return xRPG_GetItemCost(GetNativeCell(1));
+}
+
+// RPG_GetItemTeam(itemid);																	RPG_GetItemTeam
+stock xRPG_GetItemTeam(itemid)
+{
+	if(itemid<=0 || itemid>ItemsLoaded) return 0;
+	return GetArrayCell(g_hItemTeam, itemid);
+}
+
+stock xRPG_GetTeamName(itemid, String:sTeamName[], MaxLength)
+{
+	if(itemid<=0 || itemid>ItemsLoaded) return;
+	new teamnum = GetArrayCell(g_hItemTeam, itemid);
+	if(teamnum==2)
+	{
+		strcopy(sTeamName, MaxLength, "red");
+	}
+	else if(teamnum==3)
+	{
+		strcopy(sTeamName, MaxLength, "blue");
+	}
+	else
+	{
+		strcopy(sTeamName, MaxLength, "any");
+	}
+}
+
+public Native_RPG_GetItemTeam(Handle:plugin,numParams)
+{
+	if(numParams<1) return 0;
+	return xRPG_GetItemTeam(GetNativeCell(1));
 }
 
 // RPG_GetItemCategory(itemid,String:ret[],maxlen);											RPG_GetItemCategory
