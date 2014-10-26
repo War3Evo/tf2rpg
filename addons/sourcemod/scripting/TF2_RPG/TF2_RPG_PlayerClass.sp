@@ -32,8 +32,8 @@ public TF2_RPG_PlayerClass_InitNatives()
 
 public TF2_RPG_PlayerClass_Forwards()
 {
-	g_hOnItemGain			= CreateGlobalForward("OnItemGain", ET_Hook, Param_String, Param_Cell, Param_String, Param_Cell);
-	g_hOnItemLost			= CreateGlobalForward("OnItemLost", ET_Hook, Param_String, Param_Cell, Param_String, Param_Cell);
+	g_hOnItemGain			= CreateGlobalForward("OnItemGain", ET_Ignore, Param_Cell, Param_Cell);
+	g_hOnItemLost			= CreateGlobalForward("OnItemLost", ET_Ignore, Param_Cell, Param_Cell);
 }
 
 stock SetLevel(client,class,level)
@@ -129,7 +129,7 @@ stock xRPG_ClearAllOwnsItem(client)
 	if(client<0 || client>MaxClients) return;
 	for(new i=0; i<=MaxAllowedItems; i++)
 	{
-		playerOwnsItem[client][i]=-1;
+		playerOwnsItem[client][i]=0;
 	}
 }
 
@@ -158,7 +158,7 @@ stock xRPG_SetOwnsItem(client, itemid, bool:SetOwnsItem)
 	{
 		for(new i=0; i<=MaxAllowedItems; i++)
 		{
-			if(playerOwnsItem[client][i]==-1)
+			if(playerOwnsItem[client][i]==0)
 			{
 				playerOwnsItem[client][i]=itemid;
 
@@ -166,6 +166,7 @@ stock xRPG_SetOwnsItem(client, itemid, bool:SetOwnsItem)
 				Call_PushCell(client);
 				Call_PushCell(itemid);
 				Call_Finish(dummy);
+				break;
 			}
 		}
 	}
@@ -180,7 +181,7 @@ stock xRPG_SetOwnsItem(client, itemid, bool:SetOwnsItem)
 				Call_PushCell(itemid);
 				Call_Finish(dummy);
 
-				playerOwnsItem[client][i]=-1;
+				playerOwnsItem[client][i]=0;
 			}
 		}
 	}
