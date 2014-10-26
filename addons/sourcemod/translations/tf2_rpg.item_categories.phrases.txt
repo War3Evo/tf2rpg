@@ -2,7 +2,7 @@
 {
 	//TF2_RPG_ShopItem_Engine.sp
 
-	"items_CATEGORY"
+	"items"
 	{
 		"en" "items"
 	}
