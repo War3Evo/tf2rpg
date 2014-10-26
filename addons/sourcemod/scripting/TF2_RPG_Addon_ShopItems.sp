@@ -50,20 +50,20 @@ public OnPluginStart()
 //}
 public Action:OnCanPurchaseItem(ItemIndex, const String:plugin_name[], client, const String:buff_name[], any:value)
 {
-	if(StrEqual(ThisPluginName,plugin_name) && StrEqual(buff_name,"ring"))
+	if(StrEqual(ThisPluginName,plugin_name))
 	{
 		// debug message
-		DP(client, "OnCanPurchaseItem");
+		RPG_ChatMessage(client, "OnCanPurchaseItem %s", buff_name);
 	}
 	return Plugin_Continue;
 }
 
 public Action:OnItemPurchase(ItemIndex, const String:plugin_name[], client, const String:buff_name[], any:value)
 {
-	if(StrEqual(ThisPluginName,plugin_name) && StrEqual(buff_name,"ring"))
+	if(StrEqual(ThisPluginName,plugin_name))
 	{
 		// apply buff to player and keep up with it
-		RPG_ChatMessage(client, "You bought a ring!");
+		RPG_ChatMessage(client, "OnItemPurchase %s", buff_name);
 
 		return Plugin_Handled;
 	}
@@ -71,12 +71,12 @@ public Action:OnItemPurchase(ItemIndex, const String:plugin_name[], client, cons
 }
 
 //deactivate passives , client may have disconnected
-public OnItemLost(ItemIndex, const String:plugin_name[], client, const String:buff_name[], any:value)
+public OnItemLost(client, ItemIndex)
 {
-	if(StrEqual(ThisPluginName,plugin_name) && StrEqual(buff_name,"ring"))
-	{
-		// remove buff to player
-		RPG_ChatMessage(client, "Your ring was removed!");
-	}
+	DP("OnItemLost client %d item %d",client, ItemIndex);
 }
 
+public OnItemGain(client, ItemIndex)
+{
+	DP("OnItemGain client %d item %d",client, ItemIndex);
+}
