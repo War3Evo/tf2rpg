@@ -141,6 +141,18 @@ bool:xRPG_SayCommand(client,String:ChatString[192])
 		return true;
 	}
 
+	eCommandCheck=CommandCheck(ChatString,"itemsinfo");
+	if(eCommandCheck==RPGTrue)
+	{
+		ShowMenuItemsinfo(client);
+		return false;
+	}
+	else if(eCommandCheck==RPGBlock)
+	{
+		ShowMenuItemsinfo(client);
+		return true;
+	}
+
 	return false;
 }
 
