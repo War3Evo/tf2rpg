@@ -385,7 +385,7 @@ public ShowMenuItemsinfo2(client,itemnum)
 	//Format(str,sizeof(str),"%T\n%s","[War3Evo] Item: {item} (identifier: {id})",client,str,shortname,str2);
 	Format(linestr,sizeof(linestr),"%T","[TF2RPG] Item: {item} (Buy Name: {buyname})",client,itemname,buyname);
 
-	xRPG_GetTeamName(xRPG_GetItemTeam(itemnum), itemTeamname, sizeof(itemTeamname));
+	xRPG_GetItemTeamName(itemnum, itemTeamname, sizeof(itemTeamname));
 
 	Format(linestr,sizeof(linestr),"%s\nTeam: %s",linestr,itemTeamname);
 
@@ -550,7 +550,7 @@ stock xRPG_GetItemTeam(itemid)
 	return GetArrayCell(g_hItemTeam, itemid);
 }
 
-stock xRPG_GetTeamName(itemid, String:sTeamName[], MaxLength)
+stock xRPG_GetItemTeamName(itemid, String:sTeamName[], MaxLength)
 {
 	if(itemid<=0 || itemid>ItemsLoaded) return;
 	new teamnum = GetArrayCell(g_hItemTeam, itemid);
