@@ -72,6 +72,17 @@ native RPG_GetLevel(client, class);
 // forwards forwards forwards forwards forwards forwards forwards forwards forwards forwards forwards forwards forwards
 
 /**
+ * Triggered when a player dies, filters dead ringers
+ *
+ * use: RPG_GetVar(SmEvent); to get the event handle
+ *
+ * @param victim			victim index.
+ * @param attacker			attacker index.
+ * @noreturn
+*/
+forward OnRPGPlayerDeath(victim,attacker);
+
+/**
  * Allow you to capture Say chat and process it before TF2 RPG
  *
  * @param client			client index.
