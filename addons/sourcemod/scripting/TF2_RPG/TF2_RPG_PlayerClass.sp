@@ -11,6 +11,8 @@ public Plugin:myinfo=
 new p_xp[MAXPLAYERSCUSTOM][MAXCLASSES];
 new p_level[MAXPLAYERSCUSTOM][MAXCLASSES];
 
+new playerOwnsItem[MAXPLAYERSCUSTOM][MAXITEMS];
+
 
 public TF2_RPG_PlayerClass_InitNatives()
 {
@@ -24,6 +26,8 @@ public TF2_RPG_PlayerClass_InitNatives()
 
 	CreateNative("RPGSetPlayerProp",Native_RPGSetPlayerProp);
 	CreateNative("RPGGetPlayerProp",Native_RPGGetPlayerProp);
+
+	CreateNative("RPG_GetOwnsItem",Native_RPG_GetOwnsItem);
 }
 
 stock SetLevel(client,class,level)
@@ -109,4 +113,66 @@ stock SetPlayerProp(client,RPGPlayerProp:property,any:value)
 
 public Native_RPGSetPlayerProp(Handle:plugin,numParams){
 	SetPlayerProp(GetNativeCell(1),RPGPlayerProp:GetNativeCell(2),any:GetNativeCell(3));
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+// NATIVES && FORWARD
+///////////////////////////////////////////////////////////////////////////////////////////////////
+stock xRPG_ClearAllOwnsItem(client)
+{
+	if(client<0 || client>MaxClients) return;
+	for(new i=0; i<=MaxAllowedItems; i++)
+	{
+		playerOwnsItem[client][i]=-1;
+	}
+}
+
+stock bool:xRPG_GetOwnsItem(client, itemid)
+{
+	if(client<0 || client>MaxClients) return false;
+	if(itemid<=0 || itemid>ItemsLoaded) return false;
+	for(new i=0; i<=MaxAllowedItems; i++)
+	{
+		if(playerOwnsItem[client][i]==itemid) return true;
+	}
+	return false;
+}
+
+native Native_RPG_GetOwnsItem(Handle:plugin,numParams)
+{
+	if(numParams<2) return false;
+	return xRPG_GetOwnsItem(GetNativeCell(1), GetNativeCell(2));
+}
+
+stock xRPG_SetOwnsItem(client, itemid, bool:OwnsItem)
+{
+	if(client<0 || client>MaxClients) return 0;
+	if(itemid<=0 || itemid>ItemsLoaded) return 0;
+	if(OwnsItem && xRPG_GetOwnsItem(client, itemid)==false)
+	{
+		for(new i=0; i<=MaxAllowedItems; i++)
+		{
+			if(playerOwnsItem[client][i]==-1)
+			{
+				playerOwnsItem[client][i]=itemid;
+			}
+		}
+	}
+	else if(!OwnsItem)
+	{
+		for(new i=0; i<=MaxAllowedItems; i++)
+		{
+			if(playerOwnsItem[client][i]==itemid)
+			{
+				playerOwnsItem[client][i]=-1;
+			}
+		}
+	}
+	return 1;
+}
+
+native Native_RPG_SetOwnsItem(Handle:plugin,numParams)
+{
+	if(numParams<3) return false;
+	xRPG_SetOwnsItem(GetNativeCell(1), GetNativeCell(2), bool:GetNativeCell(3));
 }
