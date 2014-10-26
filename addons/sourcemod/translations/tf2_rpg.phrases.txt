@@ -1,0 +1,22 @@
+"Phrases"
+{
+	//tf2_rpg.phrases.txt
+
+	//TF2_RPG_Addon_AdminConsole.sp
+
+	"[TF2RPG] The syntax of the command is: rpg_setmoney <player> <money>"
+	{
+		"#format"   "{1:s},{2:d}"
+		"en"	"[TF2RPG] The syntax of the command is: rpg_setmoney {1} {2}"
+	}
+	"[TF2RPG] You just set player {player} money to {amount}"
+	{
+		"#format"   "{1:s},{2:d}"
+		"en"	"[TF2RPG] You just set player {1} money to {2}"
+	}
+	"Admin {player} set your money to {amount}"
+	{
+		"#format"   "{1:s},{2:d}"
+		"en"	"Admin {1} set your money to {2}"
+	}
+}
