@@ -3,19 +3,20 @@
 public Plugin:myinfo=
 {
 	name="TF2 RPG Command Hooks",
-	author=AUTHORS,
+	author="TF2 RPG TEAM",
 	description="RPG Core Plugins",
-	version=VERSION,
+	version="1.0",
 };
 
 new Handle:g_hOnRPGSayChatPre;
-new Handle:g_hOnOnRPGSayTeamChatPre;
+new Handle:g_hOnRPGSayTeamChatPre;
+new Handle:g_hOnRPGSayAllChatPre;
 
 public TF2_RPG_CommandHook_Forwards()
 {
-	g_hOnOnRPGSayChatPre       = CreateGlobalForward("OnRPGSayChatPre", ET_Hook, Param_Cell, Param_String);
-	g_hOnOnRPGSayTeamChatPre       = CreateGlobalForward("OnRPGSayTeamChatPre", ET_Hook, Param_Cell, Param_String);
-	g_hOnOnRPGSayAllChatPre       = CreateGlobalForward("OnRPGSayAllChatPre", ET_Hook, Param_Cell, Param_String);
+	g_hOnRPGSayChatPre       = CreateGlobalForward("OnRPGSayChatPre", ET_Hook, Param_Cell, Param_String);
+	g_hOnRPGSayTeamChatPre       = CreateGlobalForward("OnRPGSayTeamChatPre", ET_Hook, Param_Cell, Param_String);
+	g_hOnRPGSayAllChatPre       = CreateGlobalForward("OnRPGSayAllChatPre", ET_Hook, Param_Cell, Param_String);
 }
 
 public TF2_RPG_CommandHook_OnPluginStart()
@@ -37,7 +38,8 @@ public Action:RPG_SayCommand(client,args)
 	new Action:returnblocking=Plugin_Continue;
 
 	// pre-hook forward here
-	Call_StartForward(g_hOnOnRPGSayChatPre);
+	new Action:returnVal=Plugin_Continue;
+	Call_StartForward(g_hOnRPGSayChatPre);
 	Call_PushCell(client);
 	Call_PushStringEx(arg1,sizeof(arg1),SM_PARAM_STRING_COPY,SM_PARAM_COPYBACK);
 	Call_Finish(Action:returnVal);
@@ -46,7 +48,8 @@ public Action:RPG_SayCommand(client,args)
 		return Plugin_Handled;
 	}
 
-	Call_StartForward(g_hOnOnRPGSayAllChatPre);
+	returnVal=Plugin_Continue;
+	Call_StartForward(g_hOnRPGSayAllChatPre);
 	Call_PushCell(client);
 	Call_PushStringEx(arg1,sizeof(arg1),SM_PARAM_STRING_COPY,SM_PARAM_COPYBACK);
 	Call_Finish(Action:returnVal);
@@ -55,7 +58,7 @@ public Action:RPG_SayCommand(client,args)
 		return Plugin_Handled;
 	}
 
-	if(Internal_RPG_SayCommand(client,arg1))
+	if(xRPG_SayCommand(client,arg1))
 	{
 		returnblocking=Plugin_Handled;
 	}
@@ -74,7 +77,8 @@ public Action:RPG_TeamSayCommand(client,args)
 	new Action:returnblocking=Plugin_Continue;
 
 	// pre-hook forward here
-	Call_StartForward(g_hOnOnRPGSayTeamChatPre);
+	new Action:returnVal=Plugin_Continue;
+	Call_StartForward(g_hOnRPGSayTeamChatPre);
 	Call_PushCell(client);
 	Call_PushStringEx(arg1,sizeof(arg1),SM_PARAM_STRING_COPY,SM_PARAM_COPYBACK);
 	Call_Finish(Action:returnVal);
@@ -83,7 +87,8 @@ public Action:RPG_TeamSayCommand(client,args)
 		return Plugin_Handled;
 	}
 
-	Call_StartForward(g_hOnOnRPGSayAllChatPre);
+	returnVal=Plugin_Continue;
+	Call_StartForward(g_hOnRPGSayAllChatPre);
 	Call_PushCell(client);
 	Call_PushStringEx(arg1,sizeof(arg1),SM_PARAM_STRING_COPY,SM_PARAM_COPYBACK);
 	Call_Finish(Action:returnVal);
@@ -92,7 +97,7 @@ public Action:RPG_TeamSayCommand(client,args)
 		return Plugin_Handled;
 	}
 
-	if(Internal_RPG_SayCommand(client,arg1))
+	if(xRPG_SayCommand(client,arg1))
 	{
 		returnblocking = Plugin_Handled;
 	}
@@ -101,9 +106,9 @@ public Action:RPG_TeamSayCommand(client,args)
 }
 
 
-bool:Internal_RPG_SayCommand(client,String:arg1[256])
+bool:xRPG_SayCommand(client,String:ChatString[192])
 {
-	new top_num;
+	//new top_num;
 
 	//new bool:returnblocking = (GetConVarInt(Cvar_ChatBlocking)>0)?true:false;
 
