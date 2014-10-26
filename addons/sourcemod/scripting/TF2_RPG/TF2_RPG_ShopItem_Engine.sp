@@ -80,7 +80,7 @@ ShowMenuShopCategory(client)
 
 	new String:title[300];
 	Format(title,sizeof(title), "%T\n", "[TF2 RPG] Browse the itemshop. You have {amount}/{amount} items", client, 0, 3);
-	Format(title,sizeof(title), "%s%T", title, "Your current balance: {amount}/{maxamount}", client, title, 0, 100);
+	Format(title,sizeof(title), "%s%T", title, "Your current balance: {amount}/{maxamount}", client, 0, 100);
 	//Format(title, sizeof(title), "%s%s", title, currencyName);
 
 	SetMenuTitle(shopMenu,title);
@@ -94,7 +94,7 @@ ShowMenuShopCategory(client)
 
 	new Handle:h_TempItemCategorys = CreateArray(ByteCountToCells(64));
 
-	for(new i = 0; i < GetArraySize(g_hItemNumber); i++)
+	for(new i = 1; i <= ItemsLoaded; i++)
 	{
 		SearchClass = TFClassType:GetArrayCell(g_hItemClass, i);
 		if(SearchClass==TFClass_Unknown || SearchClass==CurrentClass)
@@ -178,7 +178,7 @@ ShowMenuShop(client, const String:category[]="")
 
 	new TFClassType:SearchClass;
 
-	for(new i = 0; i < GetArraySize(g_hItemNumber); i++)
+	for(new i = 1; i <= ItemsLoaded; i++)
 	{
 		SearchClass = TFClassType:GetArrayCell(g_hItemClass, i);
 		if(SearchClass==TFClass_Unknown || SearchClass==CurrentClass)
