@@ -50,13 +50,15 @@ public TF2_RPG_ShopItem_Engine_InitNatives()
 	CreateNative("RPG_GetItemsLoaded",Native_GetItemsLoaded);
 
 	CreateNative("RPG_GetItemName",Native_RPG_GetItemName);
-	CreateNative("RPG_GetItemShortname",Native_RPG_GetItemShortname);
-	CreateNative("RPG_GetItemShortdesc",Native_RPG_GetItemShortdesc);
+	CreateNative("RPG_GetItemBuyname",Native_RPG_GetItemBuyname);
+	CreateNative("RPG_GetItemShortDesc",Native_RPG_GetItemShortDesc);
 	CreateNative("RPG_GetItemDescription",Native_RPG_GetItemDescription);
 
 	CreateNative("RPG_GetItemCost",Native_RPG_GetItemCost);
 
 	CreateNative("RPG_GetItemCategory",Native_RPG_GetItemCategory);
+
+	CreateNative("RPG_GetItemClass",Native_RPG_GetItemClass);
 }
 
 public TF2_RPG_ShopItem_Engine_Forwards()
@@ -86,7 +88,7 @@ ShowMenuShopCategory(client)
 
 	new TFClassType:SearchClass=TFClass_Unknown;
 
-	new CurrentClass=TF2_GetPlayerClass(client);
+	new TFClassType:CurrentClass=TF2_GetPlayerClass(client);
 
 	decl String:category[64];
 	decl String:linestr[96];
@@ -100,25 +102,25 @@ ShowMenuShopCategory(client)
 		{
 			GetArrayString(g_h_ItemCategorys, i, category, sizeof(category));
 
-			if ((FindStringInArray(h_ItemCategorys, category) >= 0) || StrEqual(category, ""))
+			if ((FindStringInArray(h_TempItemCategorys, category) >= 0) || StrEqual(category, ""))
 			continue;
 			else
-			PushArrayString(h_ItemCategorys, category);
+			PushArrayString(h_TempItemCategorys, category);
 		}
 	}
 
 	// fill the menu with the categorys
-	while(GetArraySize(h_ItemCategorys))
+	while(GetArraySize(h_TempItemCategorys))
 	{
-		GetArrayString(h_ItemCategorys, 0, category, sizeof(category));
+		GetArrayString(h_TempItemCategorys, 0, category, sizeof(category));
 
 		Format(linestr,sizeof(linestr), "%T", category, client);
 
 		AddMenuItem(shopMenu, category, linestr, ITEMDRAW_DEFAULT);
-		RemoveFromArray(h_ItemCategorys, 0);
+		RemoveFromArray(h_TempItemCategorys, 0);
 	}
 
-	CloseHandle(h_ItemCategorys);
+	CloseHandle(h_TempItemCategorys);
 
 	DisplayMenu(shopMenu,client,20);
 }
@@ -127,7 +129,7 @@ public RPG_ShopMenuCategory_Sel(Handle:menu, MenuAction:action, client, selectio
 {
 	if(action==MenuAction_Select)
 	{
-		if(ValidPlayer(client))
+		if(IsValidPlayer(client))
 		{
 			decl String:SelectionInfo[64];
 			decl String:SelectionDispText[256];
@@ -148,23 +150,25 @@ ShowMenuShop(client, const String:category[]="")
 	new Handle:shopMenu=CreateMenu(RPG_ShopMenu_Selected);
 	SetMenuExitButton(shopMenu,true);
 
-	new currency=RPG_GetCurrency(client);
+	new CurrentCurrency=GetPlayerProp(client,iPlayerMoney);
 
-	new String:title[300];
-	decl String:currencyName[MAX_CURRENCY_NAME];
-	RPG_GetCurrencyName(currency, currencyName, sizeof(currencyName));
+	new TFClassType:CurrentClass=TF2_GetPlayerClass(client);
+
+	decl String:title[300];
+	//decl String:currencyName[MAX_CURRENCY_NAME];
+	//RPG_GetCurrencyName(currency, currencyName, sizeof(currencyName));
 
 	Format(title,sizeof(title), "%T\n", "[TF2 RPG] Browse the itemshop. You have {amount}/{amount} items", client, 0, 3);
-	Format(title,sizeof(title), "%s%T", title, "Your current balance: {amount}/{maxamount}", client, title, 0, 100));
-	Format(title, sizeof(title), "%s%s", title, currencyName);
+	Format(title,sizeof(title), "%s%T", title, "Your current balance: {amount}/{maxamount}", client, title, CurrentCurrency, MaxCurrency);
+	Format(title, sizeof(title), "%s%s", title, CurrencyName);
 
 	SetMenuTitle(shopMenu,title);
 
-	new String:itemname[64];
-	new String:itembuf[4];
-	new String:linestr[96];
-	new String:itemcategory[64];
-	new String:itemshortdesc[256];
+	decl String:itemname[64];
+	decl String:itembuf[4];
+	decl String:linestr[96];
+	decl String:itemcategory[64];
+	decl String:itemshortdesc[32];
 	new cost;
 	//new bool:useCategory = GetConVarBool(hUseCategorysCvar);
 	//new BackButton=0;
@@ -172,6 +176,8 @@ ShowMenuShop(client, const String:category[]="")
 	//{
 	AddMenuItem(shopMenu,"-1","[Return to Categories]");
 	//}
+
+	new TFClassType:SearchClass;
 
 	for(new i = 0; i < GetArraySize(g_hItemNumber); i++)
 	{
@@ -183,9 +189,29 @@ ShowMenuShop(client, const String:category[]="")
 			if (StrEqual(category, itemcategory))
 			{
 				// add item
-				GetArrayString(g_hItemLongName, i, itemcategory, sizeof(itemcategory));
+				xRPG_GetItemName(i,linestr,sizeof(linestr),client);
 
-				Format(linestr,sizeof(linestr), "%T", itemcategory, client);
+				cost=W3GetItemCost(client,x,W3IsItemCSmoney(x));
+				if(GetOwnsItem(client,x)) {
+					if(W3IsItemCSmoney(x)) {
+						Format(linestr,sizeof(linestr),">%s - $%d",itemname,cost);
+					}
+					else {
+						Format(linestr,sizeof(linestr),">%s - %d Gold",itemname,cost);
+					}
+				}
+				else {
+					if(W3IsItemCSmoney(x)) {
+						Format(linestr,sizeof(linestr),"%s - $%d",itemname,cost);
+					}
+					else {
+						Format(linestr,sizeof(linestr),"%s - %d Gold",itemname,cost);
+					}
+				}
+
+				xRPG_GetItemShortDesc(i,itemshortdesc,sizeof(itemshortdesc),client);
+
+				Format(linestr,sizeof(linestr),"%s\n%s",linestr,itemshortdesc);
 
 				Format(itembuf,sizeof(itembuf),"%d",i);
 
@@ -197,7 +223,7 @@ ShowMenuShop(client, const String:category[]="")
 	DisplayMenu(shopMenu,client,20);
 }
 
-public War3Source_ShopMenu_Selected(Handle:menu,MenuAction:action,client,selection)
+public RPG_ShopMenu_Selected(Handle:menu,MenuAction:action,client,selection)
 {
 	if(action==MenuAction_Select)
 	{
@@ -208,7 +234,7 @@ public War3Source_ShopMenu_Selected(Handle:menu,MenuAction:action,client,selecti
 			new SelectionStyle;
 			GetMenuItem(menu,selection,SelectionInfo,sizeof(SelectionInfo),SelectionStyle, SelectionDispText,sizeof(SelectionDispText));
 			new item=StringToInt(SelectionInfo);
-			new bool:useCategory = GetConVarBool(hUseCategorysCvar);
+			//new bool:useCategory = GetConVarBool(hUseCategorysCvar);
 			//if(item==-1&&useCategory)
 			if(item==-1)
 			{
@@ -292,7 +318,7 @@ stock bool:RPG_TryToBuyItem(client,item,bool:reshowmenu=true)
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-// NATIVES
+// NATIVES && xSTOCKS (internal stocks)
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 /*
@@ -311,14 +337,15 @@ stock bool:RPG_TryToBuyItem(client,item,bool:reshowmenu=true)
 	g_hItemBuffValue = CreateArray(1);
 */
 
-stock internal_RPG_GetItemIdByBuyname(String:ret[],maxlen,translatedfor=0)
+// RPG_GetItemIdByBuyname(String:itemBuyname[]);											RPG_GetItemIdByBuyname
+stock xRPG_GetItemIdByBuyname(String:itemBuyname[])
 {
-	decl String:itemShortName[16],String:TmpBuffer[16];
-	Format(itemShortName,sizeof(itemShortName), "%T", itemShortName, translatedfor);
-	for(new i = 0; i < GetArraySize(g_hItemNumber); i++)
+	decl String:TmpBuffer[16];
+	for(new i = 0; i <= ItemsLoaded; i++)
 	{
+		if(i==0) continue;
 		GetArrayString(g_hItemBuyName, i, TmpBuffer, sizeof(TmpBuffer));
-		if(StrEqual(itemShortName,TmpBuffer))
+		if(StrEqual(itemBuyname,TmpBuffer))
 		{
 			break;
 		}
@@ -328,7 +355,132 @@ stock internal_RPG_GetItemIdByBuyname(String:ret[],maxlen,translatedfor=0)
 
 public Native_RPG_GetItemIdByBuyname(Handle:plugin,numParams)
 {
-	new String:TMPbuffer[16];
+	if(numParams<1) return;
+	decl String:TMPbuffer[16];
 	GetNativeString(1, TMPbuffer, sizeof(TMPbuffer));
-	return internal_RPG_GetItemIdByBuyname(TMPbuffer,GetNativeCell(2),GetNativeCell(3));
+	return xRPG_GetItemIdByBuyname(TMPbuffer);
 }
+
+// RPG_GetItemName(itemid,String:ret[],maxlen,translatedfor=0);								RPG_GetItemName
+stock xRPG_GetItemName(itemid,String:ret[],maxlen,translatedfor=0)
+{
+	if(itemid<=0 || itemid>ItemsLoaded) return false;
+	decl String:TmpBuffer[32],String:ReturnBuffer[32];
+	GetArrayString(g_hItemLongName, itemid, TmpBuffer, sizeof(TmpBuffer));
+	Format(ReturnBuffer,sizeof(ReturnBuffer), "%T", TmpBuffer, translatedfor);
+	strcopy(ret, maxlen, ReturnBuffer);
+}
+
+public Native_RPG_GetItemName(Handle:plugin,numParams)
+{
+	if(numParams<4) return;
+	decl String:TMPbuffer[32];
+	xRPG_GetItemName(GetNativeCell(1),TMPbuffer,sizeof(TMPbuffer),GetNativeCell(4));
+	SetNativeString(2, TMPbuffer, GetNativeCell(3));
+}
+
+// RPG_GetItemBuyname(itemid,String:ret[],maxlen);											RPG_GetItemBuyname
+stock xRPG_GetItemBuyname(itemid,String:ret[],maxlen)
+{
+	if(itemid<=0 || itemid>ItemsLoaded) return false;
+	decl String:ReturnBuffer[16];
+	GetArrayString(g_hItemBuyName, itemid, ReturnBuffer, sizeof(ReturnBuffer));
+	strcopy(ret, maxlen, ReturnBuffer);
+}
+
+public Native_RPG_GetItemBuyname(Handle:plugin,numParams)
+{
+	if(numParams<3) return;
+	decl String:TMPbuffer[16];
+	xRPG_GetItemBuyname(GetNativeCell(1),TMPbuffer,sizeof(TMPbuffer))
+	SetNativeString(2, TMPbuffer, GetNativeCell(3));
+}
+
+// RPG_GetItemShortDesc(itemid,String:ret[],maxlen,translatedfor=0);						RPG_GetItemShortDesc
+stock xRPG_GetItemShortDesc(itemid,String:ret[],maxlen,translatedfor=0)
+{
+	if(itemid<=0 || itemid>ItemsLoaded) return false;
+	decl String:TmpBuffer[32],String:ReturnBuffer[32];
+	GetArrayString(g_hItemShortDesc, itemid, TmpBuffer, sizeof(TmpBuffer));
+	Format(ReturnBuffer,sizeof(ReturnBuffer), "%T", TmpBuffer, translatedfor);
+	strcopy(ret, maxlen, ReturnBuffer);
+}
+
+public Native_RPG_GetItemShortDesc(Handle:plugin,numParams)
+{
+	if(numParams<4) return;
+	decl String:TMPbuffer[32];
+	xRPG_GetItemShortDesc(GetNativeCell(1),TMPbuffer,sizeof(TMPbuffer),GetNativeCell(4));
+	SetNativeString(2, TMPbuffer, GetNativeCell(3));
+}
+
+// RPG_GetItemDescription(itemid,String:ret[],maxlen,translatedfor=0);						RPG_GetItemDescription
+stock xRPG_GetItemDescription(itemid,String:ret[],maxlen,translatedfor=0)
+{
+	if(itemid<=0 || itemid>ItemsLoaded) return false;
+	decl String:TmpBuffer[192],String:ReturnBuffer[192];
+	GetArrayString(g_hItemLongDesc, itemid, TmpBuffer, sizeof(TmpBuffer));
+	Format(ReturnBuffer,sizeof(ReturnBuffer), "%T", TmpBuffer, translatedfor);
+	strcopy(ret, maxlen, ReturnBuffer);
+}
+
+public Native_RPG_GetItemDescription(Handle:plugin,numParams)
+{
+	if(numParams<4) return;
+	decl String:TMPbuffer[192];
+	xRPG_GetItemDescription(GetNativeCell(1),TMPbuffer,sizeof(TMPbuffer),GetNativeCell(4));
+	SetNativeString(2, TMPbuffer, GetNativeCell(3));
+}
+
+// RPG_GetItemCost(itemid);																	RPG_GetItemCost
+stock xRPG_GetItemCost(itemid)
+{
+	if(itemid<=0 || itemid>ItemsLoaded) return 0;
+	return GetArrayCell(g_hItemCost, item);
+}
+
+public Native_RPG_GetItemCost(Handle:plugin,numParams)
+{
+	if(numParams<4) return;
+	return xRPG_GetItemCost(GetNativeCell(1));
+}
+
+// RPG_GetItemCategory(itemid,String:ret[],maxlen);											RPG_GetItemCategory
+stock xRPG_GetItemCategory(itemid,String:ret[],maxlen,translatedfor=0)
+{
+	if(itemid<=0 || itemid>ItemsLoaded) return false;
+	decl String:TmpBuffer[64],String:ReturnBuffer[64];
+	GetArrayString(g_h_ItemCategorys, itemid, TmpBuffer, sizeof(TmpBuffer));
+	Format(ReturnBuffer,sizeof(ReturnBuffer), "%T", TmpBuffer, translatedfor);
+	strcopy(ret, maxlen, ReturnBuffer);
+}
+
+public Native_RPG_GetItemCategory(Handle:plugin,numParams)
+{
+	if(numParams<3) return;
+	decl String:TMPbuffer[64];
+	xRPG_GetItemCategory(GetNativeCell(1),TMPbuffer,sizeof(TMPbuffer),GetNativeCell(4));
+	SetNativeString(2, TMPbuffer, GetNativeCell(3));
+}
+
+// RPG_GetItemClass(itemid);																	RPG_GetItemClass
+stock TFClassType:xRPG_GetItemClass(itemid)
+{
+	if(itemid<=0 || itemid>ItemsLoaded) return TFClass_Unknown;
+	new iClassID=GetArrayCell(g_hItemClass, item);
+	if(iClassID<0 || iClassID>9) return TFClass_Unknown;
+	return TFClassType:iClassID;
+}
+
+public Native_RPG_GetItemClass(Handle:plugin,numParams)
+{
+	if(numParams<4) return;
+	return xRPG_GetItemClass(GetNativeCell(1));
+}
+
+// Native_GetItemsLoaded();																		Native_GetItemsLoaded
+public Native_GetItemsLoaded(Handle:plugin,numParams)
+{
+	return ItemsLoaded;
+}
+
