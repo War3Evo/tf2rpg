@@ -180,6 +180,8 @@ ShowMenuShop(client, const String:category[]="")
 
 	new TFClassType:SearchClass;
 
+	new MenuDrawType;
+
 	for(new i = 1; i <= ItemsLoaded; i++)
 	{
 		SearchClass = TFClassType:GetArrayCell(g_hItemClass, i);
@@ -196,10 +198,12 @@ ShowMenuShop(client, const String:category[]="")
 				if(xRPG_GetOwnsItem(client,i))
 				{
 					Format(linestr,sizeof(linestr), ">%s - %d", itemname, cost);
+					MenuDrawType=ITEMDRAW_DISABLED;
 				}
 				else
 				{
 					Format(linestr,sizeof(linestr), "%s - %d", itemname, cost);
+					MenuDrawType=ITEMDRAW_DEFAULT;
 				}
 
 				xRPG_GetItemShortDesc(i,itemshortdesc,sizeof(itemshortdesc),client);
@@ -208,7 +212,7 @@ ShowMenuShop(client, const String:category[]="")
 
 				Format(itembuf,sizeof(itembuf),"%d",i);
 
-				AddMenuItem(shopMenu,itembuf,linestr,ITEMDRAW_DEFAULT);
+				AddMenuItem(shopMenu,itembuf,linestr,MenuDrawType);
 			}
 		}
 	}
@@ -279,7 +283,7 @@ stock bool:RPG_TryToBuyItem(client,ItemIndex,bool:reshowmenu=true)
 	new credits=GetPlayerProp(client,iMoney);
 
 	decl String:itemname[32];
-	GetArrayString(g_hItemLongName, ItemIndex, itemname, sizeof(itemname));
+	xRPG_GetItemName(ItemIndex,itemname,sizeof(itemname),client);
 
 	if(ItemCost>credits)
 	{
