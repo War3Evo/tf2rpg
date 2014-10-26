@@ -79,7 +79,7 @@ ShowMenuShopCategory(client)
 	//new currency = RPG_GetCurrency(client);
 
 	new String:title[300];
-	Format(title,sizeof(title), "%T\n", "[TF2 RPG] Browse the itemshop. You have {amount}/{amount} items", client, 0, 3);
+	Format(title,sizeof(title), "%T\n", "[TF2RPG] Browse the itemshop. You have {amount}/{amount} items", client, 0, 3);
 	Format(title,sizeof(title), "%s%T", title, "Your current balance: {amount}/{maxamount}", client, GetPlayerProp(client,iMoney), MaxCurrency);
 	//Format(title, sizeof(title), "%s%s", title, currencyName);
 
@@ -157,7 +157,7 @@ ShowMenuShop(client, const String:category[]="")
 	//decl String:currencyName[MAX_CURRENCY_NAME];
 	//RPG_GetCurrencyName(currency, currencyName, sizeof(currencyName));
 
-	Format(title,sizeof(title), "%T\n", "[TF2 RPG] Browse the itemshop. You have {amount}/{amount} items", client, 0, 3);
+	Format(title,sizeof(title), "%T\n", "[TF2RPG] Browse the itemshop. You have {amount}/{amount} items", client, 0, 3);
 	Format(title,sizeof(title), "%s%T", title, "Your current balance: {amount}/{maxamount}", client, CurrentCurrency, MaxCurrency);
 	//Format(title, sizeof(title), "%s%s ", title, CurrencyName);
 
@@ -191,7 +191,7 @@ ShowMenuShop(client, const String:category[]="")
 				xRPG_GetItemName(i,itemname,sizeof(itemname),client);
 
 				cost=RPG_GetItemCost(i);
-				if(RPG_GetOwnsItem(client,i))
+				if(xRPG_GetOwnsItem(client,i))
 				{
 					Format(linestr,sizeof(linestr), ">%s - %d", itemname, cost);
 				}
@@ -235,7 +235,6 @@ public RPG_ShopMenu_Selected(Handle:menu,MenuAction:action,client,selection)
 			{
 				RPG_TryToBuyItem(client,itemIndex,true);
 			}
-
 		}
 	}
 	if(action==MenuAction_End)
@@ -301,11 +300,107 @@ stock bool:RPG_TryToBuyItem(client,ItemIndex,bool:reshowmenu=true)
 	Call_Finish(Action:returnVal);
 	if(returnVal == Plugin_Handled)
 	{
+		xRPG_SetOwnsItem(client,ItemIndex,true);
 		RPG_ChatMessage(client,"%T","You have successfully purchased {itemname}", client, itemname);
 		return true;
 	}
 
 	return false;
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+// SHOPMENU ITEMS INFO
+///////////////////////////////////////////////////////////////////////////////////////////////////
+
+ShowMenuItemsinfo(client)
+{
+	new Handle:itemsinfoMenu=CreateMenu(ShowMenuItemsinfoSelected);
+	SetMenuExitButton(itemsinfoMenu,true);
+
+	decl String:title[64];
+
+	Format(title,sizeof(title), "%T\n", "[TF2RPG] Shopmenu items", client);
+	SetMenuTitle(itemsinfoMenu,title);
+
+	decl String:linestr[64];
+	decl String:itembuf[4];
+	decl String:itemname[64];
+
+	for(new i = 1; i <= ItemsLoaded; i++)
+	{
+		// add item
+		xRPG_GetItemName(i,itemname,sizeof(itemname),client);
+
+		if(xRPG_GetOwnsItem(client,i))
+		{
+			Format(linestr,sizeof(linestr), ">%s", itemname);
+		}
+		else
+		{
+			Format(linestr,sizeof(linestr), "%s", itemname);
+		}
+
+		Format(itembuf,sizeof(itembuf),"%d",i);
+
+		AddMenuItem(itemsinfoMenu,itembuf,linestr,ITEMDRAW_DEFAULT);
+	}
+
+	DisplayMenu(itemsinfoMenu,client,MENU_TIME_FOREVER);
+}
+
+public ShowMenuItemsinfoSelected(Handle:menu,MenuAction:action,client,selection)
+{
+	if(action==MenuAction_Select)
+	{
+		decl String:SelectionInfo[4];
+		decl String:SelectionDispText[256];
+		new SelectionStyle;
+		GetMenuItem(menu,selection,SelectionInfo,sizeof(SelectionInfo),SelectionStyle, SelectionDispText,sizeof(SelectionDispText));
+		new itemnum=StringToInt(SelectionInfo);
+		if(itemnum>0&&itemnum<=ItemsLoaded)
+			ShowMenuItemsinfo2(client,itemnum);
+	}
+	if(action==MenuAction_End)
+	{
+		CloseHandle(menu);
+	}
+}
+public ShowMenuItemsinfo2(client,itemnum)
+{
+	new Handle:itemsinfoMenu=CreateMenu(ShowMenuItemsinfo2Selected);
+	SetMenuExitButton(itemsinfoMenu,true);
+
+	decl String:linestr[256];
+	decl String:itemname[64];
+	decl String:buyname[16];
+	decl String:itemDescription[192];
+
+	xRPG_GetItemName(itemnum,itemname,sizeof(itemname),client);
+	xRPG_GetItemBuyname(itemnum,buyname,sizeof(buyname));
+	xRPG_GetItemDescription(itemnum,itemDescription,sizeof(itemDescription),client);
+
+	//Format(str,sizeof(str),"%T\n%s","[War3Evo] Item: {item} (identifier: {id})",client,str,shortname,str2);
+	Format(linestr,sizeof(linestr),"%T","[TF2RPG] Item: {item} (Buy Name: {buyname})",client,itemname,buyname);
+
+	Format(linestr,sizeof(linestr),"%s\n%s",linestr,itemDescription);
+
+	SetMenuTitle(itemsinfoMenu,linestr);
+
+	Format(linestr,sizeof(linestr),"Back");
+	AddMenuItem(itemsinfoMenu,"-1",linestr);
+
+	DisplayMenu(itemsinfoMenu,client,120); //was MENU_TIME_FOREVER, but felt some people may not have 0 binded?
+}
+public ShowMenuItemsinfo2Selected(Handle:menu,MenuAction:action,client,selection)
+{
+	if(action==MenuAction_Select)
+	{
+		ShowMenuItemsinfo(client);
+	}
+	if(action==MenuAction_End)
+	{
+		CloseHandle(menu);
+	}
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
