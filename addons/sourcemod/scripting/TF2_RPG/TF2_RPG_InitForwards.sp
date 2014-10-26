@@ -8,5 +8,6 @@ public bool:TF2_RPG_InitForwards()
 	TF2_RPG_CommandHook_Forwards();
 	TF2_RPG_ShopItem_Engine_Forwards();
 	TF2_RPG_PlayerClass_Forwards();
+	TF2_RPG_000_OnPlayerDeath_Forwards();
 	return true;
 }
