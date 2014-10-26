@@ -5,7 +5,7 @@ enum RPGPlayerProp
 {
 	bool:bPutInServer,
 
-	iPlayerMoney,
+	iMoney,
 
 	iMaxHP,
 
