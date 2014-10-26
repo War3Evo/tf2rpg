@@ -119,7 +119,9 @@ public APLRes:AskPluginLoad2(Handle:plugin,bool:late,String:error[],err_max)
 public OnAllPluginsLoaded()
 {
 	PrintToServer("OnAllPluginsLoaded");
-	if(!LoadConfigurationFile()) LogError("[TF2_RPG] Unable to Load Configuartion files!");
+
+	TF2_RPG_LoadConfiguration_OnAllPluginsLoaded();
+
 	//ConnectDB();
 }
 //=============================================================================
