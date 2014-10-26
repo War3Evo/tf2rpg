@@ -3,7 +3,7 @@
 stock dummy; //variable for dummies! Use this where ever u want for a dummy return
 stock String:dummystr[32]; //just a dummy string!
 
-new dummyreturn; //for your not used return values
+//new dummyreturn; //for your not used return values
 
 new bHasDiedThisFrame[MAXPLAYERSCUSTOM];
 /**********************
@@ -14,15 +14,13 @@ new bHasDiedThisFrame[MAXPLAYERSCUSTOM];
 
 new bool:FirstTimeMapStart=false;
 
-new TransClient;
-
 new RPGVarArr[RPGVar];
 
 //==============================
 // DATABASE
 //==============================
-new Handle:hDB;
-new TF2_RPG_SQLType:g_SQLType;
+//new Handle:hDB;
+//new TF2_RPG_SQLType:g_SQLType;
 
 //=============================
 // PlayerClass
@@ -63,6 +61,7 @@ new Handle:g_hItemBuffValue;
 new Handle:g_hOnCanPurchaseItem;
 new Handle:g_hOnItemPurchase;
 new Handle:g_hOnItemLost;
+new Handle:g_hOnItemGain;
 
 //=============================
 // Currency
