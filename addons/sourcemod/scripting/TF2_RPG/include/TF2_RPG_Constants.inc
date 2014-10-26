@@ -1,7 +1,12 @@
 // TF2_RPG_Constants.inc
 
+// All internal code will have a small x in front of what would look like a native code
+// x stands for internal use only
+
 // The "MAXPLAYERS" in clients.inc is 65 and for TF2 we don't have more than 32, so why waste space?
 #define MAXPLAYERSCUSTOM 34   //+2 of real for normal servers, add +X number of HLTV slots
+
+#define MAXITEMS 10 // Max number of items a player can hold
 
 /*
 enum TFClassType
