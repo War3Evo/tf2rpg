@@ -31,17 +31,26 @@ forward Action:OnCanPurchaseItem(ItemIndex, const String:plugin_name[], client, 
 forward Action:OnItemPurchase(ItemIndex, const String:plugin_name[], client, const String:buff_name[], any:value);
 
 /**
+ * Happens when item ownership is set
  *
- * @param ItemIndex				This index will change when you restart server or reload shop items
- * @param plugin_name			the plugin name without path and extension
  * @param client				client index.
- * @param buff_name				the name of the buff
- * @param value					any value
+ * @param ItemIndex				This index will change when you restart server or reload shop items
  *
  * @noreturn
  *
  */
-forward OnItemLost(ItemIndex, const String:plugin_name[], client, const String:buff_name[], any:value);
+forward OnItemGain(client, ItemIndex);
+
+/**
+ * Happens when item ownership is lost
+ *
+ * @param client				client index.
+ * @param ItemIndex				This index will change when you restart server or reload shop items
+ *
+ * @noreturn
+ *
+ */
+forward OnItemLost(client, ItemIndex);
 
 
 ////////////////////////////////////////////////////////////////////////////////
