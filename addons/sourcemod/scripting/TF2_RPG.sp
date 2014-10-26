@@ -27,7 +27,6 @@
 #include <sdktools_functions>
 #include <tf2>
 #include <tf2_stocks>
-#include <morecolors>
 #include <keyvalues>
 #include <tf2attributes>
 
@@ -133,7 +132,7 @@ public OnMapStart()
 
 	if(!FirstTimeMapStart)
 	{
-		LoadTranslations("TF2_RPG.phrases.txt");
+		//LoadTranslations("TF2_RPG.phrases.txt");
 	}
 
 	FirstTimeMapStart=true;
