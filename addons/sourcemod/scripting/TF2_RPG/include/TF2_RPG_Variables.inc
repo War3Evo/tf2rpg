@@ -67,5 +67,5 @@ new Handle:g_hOnItemGain;
 // Currency
 //=============================
 
-new String:CurrencyName[16]={"Gold"};
+//new String:CurrencyName[16]={"Gold"};
 new MaxCurrency=300;

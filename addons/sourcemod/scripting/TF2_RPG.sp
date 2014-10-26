@@ -132,7 +132,7 @@ public OnMapStart()
 
 	if(!FirstTimeMapStart)
 	{
-		//LoadTranslations("TF2_RPG.phrases.txt");
+		LoadTranslations("tf2_rpg.phrases.txt");
 	}
 
 	FirstTimeMapStart=true;

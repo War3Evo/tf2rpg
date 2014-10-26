@@ -50,6 +50,8 @@ public OnPluginStart()
 //}
 public Action:OnCanPurchaseItem(ItemIndex, const String:plugin_name[], client, const String:buff_name[], any:value)
 {
+	RPG_ChatMessage(client, "OnCanPurchaseItem thisplugin %s plugin_name %s", ThisPluginName, plugin_name);
+
 	if(StrEqual(ThisPluginName,plugin_name))
 	{
 		// debug message
@@ -60,6 +62,8 @@ public Action:OnCanPurchaseItem(ItemIndex, const String:plugin_name[], client, c
 
 public Action:OnItemPurchase(ItemIndex, const String:plugin_name[], client, const String:buff_name[], any:value)
 {
+	RPG_ChatMessage(client, "OnItemPurchase thisplugin %s plugin_name %s", ThisPluginName, plugin_name);
+
 	if(StrEqual(ThisPluginName,plugin_name))
 	{
 		// apply buff to player and keep up with it

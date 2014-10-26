@@ -64,8 +64,8 @@ public TF2_RPG_ShopItem_Engine_InitNatives()
 public TF2_RPG_ShopItem_Engine_Forwards()
 {
 	//
-	g_hOnCanPurchaseItem	= CreateGlobalForward("OnCanPurchaseItem", ET_Hook, Param_String, Param_Cell, Param_String, Param_Cell);
-	g_hOnItemPurchase		= CreateGlobalForward("OnItemPurchase", ET_Hook, Param_String, Param_Cell, Param_String, Param_Cell);
+	g_hOnCanPurchaseItem	= CreateGlobalForward("OnCanPurchaseItem", ET_Hook, Param_Cell, Param_String, Param_Cell, Param_String, Param_Any);
+	g_hOnItemPurchase		= CreateGlobalForward("OnItemPurchase", ET_Hook, Param_Cell, Param_String, Param_Cell, Param_String, Param_Any);
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -80,7 +80,7 @@ ShowMenuShopCategory(client)
 
 	new String:title[300];
 	Format(title,sizeof(title), "%T\n", "[TF2 RPG] Browse the itemshop. You have {amount}/{amount} items", client, 0, 3);
-	Format(title,sizeof(title), "%s%T", title, "Your current balance: {amount}/{maxamount}", client, 0, 100);
+	Format(title,sizeof(title), "%s%T", title, "Your current balance: {amount}/{maxamount}", client, GetPlayerProp(client,iMoney), MaxCurrency);
 	//Format(title, sizeof(title), "%s%s", title, currencyName);
 
 	SetMenuTitle(shopMenu,title);
@@ -158,8 +158,8 @@ ShowMenuShop(client, const String:category[]="")
 	//RPG_GetCurrencyName(currency, currencyName, sizeof(currencyName));
 
 	Format(title,sizeof(title), "%T\n", "[TF2 RPG] Browse the itemshop. You have {amount}/{amount} items", client, 0, 3);
-	Format(title,sizeof(title), "%s%T", title, "Your current balance: {amount}/{maxamount}", client, title, CurrentCurrency, MaxCurrency);
-	Format(title, sizeof(title), "%s%s", title, CurrencyName);
+	Format(title,sizeof(title), "%s%T", title, "Your current balance: {amount}/{maxamount}", client, CurrentCurrency, MaxCurrency);
+	//Format(title, sizeof(title), "%s%s ", title, CurrencyName);
 
 	SetMenuTitle(shopMenu,title);
 
@@ -224,16 +224,16 @@ public RPG_ShopMenu_Selected(Handle:menu,MenuAction:action,client,selection)
 			decl String:SelectionDispText[256];
 			new SelectionStyle;
 			GetMenuItem(menu,selection,SelectionInfo,sizeof(SelectionInfo),SelectionStyle, SelectionDispText,sizeof(SelectionDispText));
-			new item=StringToInt(SelectionInfo);
+			new itemIndex=StringToInt(SelectionInfo);
 			//new bool:useCategory = GetConVarBool(hUseCategorysCvar);
 			//if(item==-1&&useCategory)
-			if(item==-1)
+			if(itemIndex==-1)
 			{
 				ShowMenuShopCategory(client);
 			}
 			else
 			{
-				RPG_TryToBuyItem(client,item,true);
+				RPG_TryToBuyItem(client,itemIndex,true);
 			}
 
 		}
@@ -244,25 +244,25 @@ public RPG_ShopMenu_Selected(Handle:menu,MenuAction:action,client,selection)
 	}
 }
 
-stock bool:RPG_TryToBuyItem(client,item,bool:reshowmenu=true)
+stock bool:RPG_TryToBuyItem(client,ItemIndex,bool:reshowmenu=true)
 {
-	if(item>ItemsLoaded)
+	if(ItemIndex>ItemsLoaded)
 	{
-		LogError("item>ItemsLoaded item = %d and other = %d",item,ItemsLoaded);
+		LogError("item>ItemsLoaded item = %d and other = %d",ItemIndex,ItemsLoaded);
 		return false;
 	}
 
 	decl String:sPluginName[64];
 	decl String:BuffName[16];
 
-	GetArrayString(g_hItemPluginName, item, sPluginName, sizeof(sPluginName));
-	GetArrayString(g_hItemBuffName, item, BuffName, sizeof(BuffName));
+	GetArrayString(g_hItemPluginName, ItemIndex, sPluginName, sizeof(sPluginName));
+	GetArrayString(g_hItemBuffName, ItemIndex, BuffName, sizeof(BuffName));
 
-	new any:BuffValue=GetArrayCell(g_hItemBuffValue, item);
+	new any:BuffValue=GetArrayCell(g_hItemBuffValue, ItemIndex);
 
 	new Action:returnVal=Plugin_Continue;
 	Call_StartForward(g_hOnCanPurchaseItem);
-	Call_PushCell(item);
+	Call_PushCell(ItemIndex);
 	Call_PushString(sPluginName);
 	Call_PushCell(client);
 	Call_PushString(BuffName);
@@ -273,12 +273,12 @@ stock bool:RPG_TryToBuyItem(client,item,bool:reshowmenu=true)
 		return false;
 	}
 
-	new any:ItemCost=GetArrayCell(g_hItemCost, item);
+	new any:ItemCost=GetArrayCell(g_hItemCost, ItemIndex);
 
 	new credits=GetPlayerProp(client,iMoney);
 
 	decl String:itemname[32];
-	GetArrayString(g_hItemLongName, item, itemname, sizeof(itemname));
+	GetArrayString(g_hItemLongName, ItemIndex, itemname, sizeof(itemname));
 
 	if(ItemCost>credits)
 	{
@@ -293,7 +293,7 @@ stock bool:RPG_TryToBuyItem(client,item,bool:reshowmenu=true)
 
 	returnVal=Plugin_Continue;
 	Call_StartForward(g_hOnItemPurchase);
-	Call_PushCell(item);
+	Call_PushCell(ItemIndex);
 	Call_PushString(sPluginName);
 	Call_PushCell(client);
 	Call_PushString(BuffName);
