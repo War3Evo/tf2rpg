@@ -10,7 +10,7 @@ public TF2_RPG_000_OnPlayerDeath_OnPluginStart()
 	}
 }
 
-public TTF2_RPG_000_OnPlayerDeath_Forwards()
+public TF2_RPG_000_OnPlayerDeath_Forwards()
 {
 	g_hOnRPG_PlayerDeath = CreateGlobalForward("OnRPGPlayerDeath", ET_Ignore, Param_Cell, Param_Cell);
 }
