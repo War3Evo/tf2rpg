@@ -10,6 +10,11 @@ public TF2_RPG_000_OnPlayerDeath_OnPluginStart()
 	}
 }
 
+public TTF2_RPG_000_OnPlayerDeath_Forwards()
+{
+	g_hOnRPG_PlayerDeath = CreateGlobalForward("OnRPGPlayerDeath", ET_Ignore, Param_Cell, Param_Cell);
+}
+
 public Action:RPG_PlayerDeathEvent(Handle:event,const String:name[],bool:dontBroadcast)
 {
 	new uid_victim = GetEventInt(event, "userid");
@@ -96,7 +101,14 @@ public Action:RPG_PlayerDeathEvent(Handle:event,const String:name[],bool:dontBro
 	{
 		//pre death event, internal event
 
-		OnRPGEventDeath(event,victimIndex,attackerIndex,distance,attacker_hpleft);
+		//OnRPGEventDeath(event,victimIndex,attackerIndex,distance,attacker_hpleft);
+
+		RPGVarArr[SmEvent]=event; // saves event handle
+
+		Call_StartForward(g_hOnRPG_PlayerDeath);
+		Call_PushCell(victimIndex);
+		Call_PushCell(attackerIndex);
+		Call_Finish(dummy);
 
 		SetPlayerProp(victimIndex,bStatefulSpawn,true);//next spawn shall be stateful
 
@@ -105,10 +117,11 @@ public Action:RPG_PlayerDeathEvent(Handle:event,const String:name[],bool:dontBro
 }
 
 // filtered for dead ringer:
+/*
 public OnRPGEventDeath(Handle:event,victimIndex,attackerIndex,distance,attacker_hpleft)
 {
 	// Handle Death Events
 
 	new WeaponId = GetEventInt(event, "weaponid");
 	DP("weapon id test %d",WeaponId);
-}
+}*/
