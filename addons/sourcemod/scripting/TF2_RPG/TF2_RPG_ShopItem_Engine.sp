@@ -2,7 +2,7 @@
 
 // ShopItem Engine will store all shopitem information for retrieval later
 
-new Handle:g_hShopItemNumber;
+//new Handle:g_hShopItemNumber;
 
 public TF2_RPG_ShopItem_Engine_OnPluginStart()
 {
