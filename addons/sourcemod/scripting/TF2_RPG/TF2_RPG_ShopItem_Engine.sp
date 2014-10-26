@@ -66,7 +66,6 @@ public TF2_RPG_ShopItem_Engine_Forwards()
 	//
 	g_hOnCanPurchaseItem	= CreateGlobalForward("OnCanPurchaseItem", ET_Hook, Param_String, Param_Cell, Param_String, Param_Cell);
 	g_hOnItemPurchase		= CreateGlobalForward("OnItemPurchase", ET_Hook, Param_String, Param_Cell, Param_String, Param_Cell);
-	g_hOnItemLost			= CreateGlobalForward("OnItemLost", ET_Hook, Param_String, Param_Cell, Param_String, Param_Cell);
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -150,7 +149,7 @@ ShowMenuShop(client, const String:category[]="")
 	new Handle:shopMenu=CreateMenu(RPG_ShopMenu_Selected);
 	SetMenuExitButton(shopMenu,true);
 
-	new CurrentCurrency=GetPlayerProp(client,iPlayerMoney);
+	new CurrentCurrency=GetPlayerProp(client,iMoney);
 
 	new TFClassType:CurrentClass=TF2_GetPlayerClass(client);
 
@@ -189,24 +188,16 @@ ShowMenuShop(client, const String:category[]="")
 			if (StrEqual(category, itemcategory))
 			{
 				// add item
-				xRPG_GetItemName(i,linestr,sizeof(linestr),client);
+				xRPG_GetItemName(i,itemname,sizeof(itemname),client);
 
-				cost=W3GetItemCost(client,x,W3IsItemCSmoney(x));
-				if(GetOwnsItem(client,x)) {
-					if(W3IsItemCSmoney(x)) {
-						Format(linestr,sizeof(linestr),">%s - $%d",itemname,cost);
-					}
-					else {
-						Format(linestr,sizeof(linestr),">%s - %d Gold",itemname,cost);
-					}
+				cost=RPG_GetItemCost(i);
+				if(RPG_GetOwnsItem(client,i))
+				{
+					Format(linestr,sizeof(linestr), ">%s - %d", itemname, cost);
 				}
-				else {
-					if(W3IsItemCSmoney(x)) {
-						Format(linestr,sizeof(linestr),"%s - $%d",itemname,cost);
-					}
-					else {
-						Format(linestr,sizeof(linestr),"%s - %d Gold",itemname,cost);
-					}
+				else
+				{
+					Format(linestr,sizeof(linestr), "%s - %d", itemname, cost);
 				}
 
 				xRPG_GetItemShortDesc(i,itemshortdesc,sizeof(itemshortdesc),client);
@@ -227,7 +218,7 @@ public RPG_ShopMenu_Selected(Handle:menu,MenuAction:action,client,selection)
 {
 	if(action==MenuAction_Select)
 	{
-		if(ValidPlayer(client))
+		if(IsValidPlayer(client))
 		{
 			decl String:SelectionInfo[4];
 			decl String:SelectionDispText[256];
@@ -255,9 +246,9 @@ public RPG_ShopMenu_Selected(Handle:menu,MenuAction:action,client,selection)
 
 stock bool:RPG_TryToBuyItem(client,item,bool:reshowmenu=true)
 {
-	if(item>=GetArraySize(g_hItemNumber))
+	if(item>ItemsLoaded)
 	{
-		LogError("item>=GetArraySize(g_hItemNumber) item = %d and other = %d",item,GetArraySize(g_hItemNumber));
+		LogError("item>ItemsLoaded item = %d and other = %d",item,ItemsLoaded);
 		return false;
 	}
 
@@ -267,9 +258,9 @@ stock bool:RPG_TryToBuyItem(client,item,bool:reshowmenu=true)
 	GetArrayString(g_hItemPluginName, item, sPluginName, sizeof(sPluginName));
 	GetArrayString(g_hItemBuffName, item, BuffName, sizeof(BuffName));
 
-	new any:BuffValue=GetArrayCell(g_hItemValue, item);
+	new any:BuffValue=GetArrayCell(g_hItemBuffValue, item);
 
-	new Action:returnblocking=Plugin_Continue;
+	new Action:returnVal=Plugin_Continue;
 	Call_StartForward(g_hOnCanPurchaseItem);
 	Call_PushCell(item);
 	Call_PushString(sPluginName);
@@ -284,7 +275,7 @@ stock bool:RPG_TryToBuyItem(client,item,bool:reshowmenu=true)
 
 	new any:ItemCost=GetArrayCell(g_hItemCost, item);
 
-	new credits=GetPlayerProp(client,iPlayerMoney);
+	new credits=GetPlayerProp(client,iMoney);
 
 	decl String:itemname[32];
 	GetArrayString(g_hItemLongName, item, itemname, sizeof(itemname));
@@ -297,10 +288,10 @@ stock bool:RPG_TryToBuyItem(client,item,bool:reshowmenu=true)
 	else
 	{
 		credits-=ItemCost;
-		SetPlayerProp(client,iPlayerMoney,credits);
+		SetPlayerProp(client,iMoney,credits);
 	}
 
-	returnblocking=Plugin_Continue;
+	returnVal=Plugin_Continue;
 	Call_StartForward(g_hOnItemPurchase);
 	Call_PushCell(item);
 	Call_PushString(sPluginName);
@@ -341,7 +332,8 @@ stock bool:RPG_TryToBuyItem(client,item,bool:reshowmenu=true)
 stock xRPG_GetItemIdByBuyname(String:itemBuyname[])
 {
 	decl String:TmpBuffer[16];
-	for(new i = 0; i <= ItemsLoaded; i++)
+	new i;
+	for(i = 0; i <= ItemsLoaded; i++)
 	{
 		if(i==0) continue;
 		GetArrayString(g_hItemBuyName, i, TmpBuffer, sizeof(TmpBuffer));
@@ -355,7 +347,7 @@ stock xRPG_GetItemIdByBuyname(String:itemBuyname[])
 
 public Native_RPG_GetItemIdByBuyname(Handle:plugin,numParams)
 {
-	if(numParams<1) return;
+	if(numParams<1) return 0;
 	decl String:TMPbuffer[16];
 	GetNativeString(1, TMPbuffer, sizeof(TMPbuffer));
 	return xRPG_GetItemIdByBuyname(TMPbuffer);
@@ -364,7 +356,7 @@ public Native_RPG_GetItemIdByBuyname(Handle:plugin,numParams)
 // RPG_GetItemName(itemid,String:ret[],maxlen,translatedfor=0);								RPG_GetItemName
 stock xRPG_GetItemName(itemid,String:ret[],maxlen,translatedfor=0)
 {
-	if(itemid<=0 || itemid>ItemsLoaded) return false;
+	if(itemid<=0 || itemid>ItemsLoaded) return;
 	decl String:TmpBuffer[32],String:ReturnBuffer[32];
 	GetArrayString(g_hItemLongName, itemid, TmpBuffer, sizeof(TmpBuffer));
 	Format(ReturnBuffer,sizeof(ReturnBuffer), "%T", TmpBuffer, translatedfor);
@@ -382,7 +374,7 @@ public Native_RPG_GetItemName(Handle:plugin,numParams)
 // RPG_GetItemBuyname(itemid,String:ret[],maxlen);											RPG_GetItemBuyname
 stock xRPG_GetItemBuyname(itemid,String:ret[],maxlen)
 {
-	if(itemid<=0 || itemid>ItemsLoaded) return false;
+	if(itemid<=0 || itemid>ItemsLoaded) return;
 	decl String:ReturnBuffer[16];
 	GetArrayString(g_hItemBuyName, itemid, ReturnBuffer, sizeof(ReturnBuffer));
 	strcopy(ret, maxlen, ReturnBuffer);
@@ -392,14 +384,14 @@ public Native_RPG_GetItemBuyname(Handle:plugin,numParams)
 {
 	if(numParams<3) return;
 	decl String:TMPbuffer[16];
-	xRPG_GetItemBuyname(GetNativeCell(1),TMPbuffer,sizeof(TMPbuffer))
+	xRPG_GetItemBuyname(GetNativeCell(1),TMPbuffer,sizeof(TMPbuffer));
 	SetNativeString(2, TMPbuffer, GetNativeCell(3));
 }
 
 // RPG_GetItemShortDesc(itemid,String:ret[],maxlen,translatedfor=0);						RPG_GetItemShortDesc
 stock xRPG_GetItemShortDesc(itemid,String:ret[],maxlen,translatedfor=0)
 {
-	if(itemid<=0 || itemid>ItemsLoaded) return false;
+	if(itemid<=0 || itemid>ItemsLoaded) return;
 	decl String:TmpBuffer[32],String:ReturnBuffer[32];
 	GetArrayString(g_hItemShortDesc, itemid, TmpBuffer, sizeof(TmpBuffer));
 	Format(ReturnBuffer,sizeof(ReturnBuffer), "%T", TmpBuffer, translatedfor);
@@ -417,7 +409,7 @@ public Native_RPG_GetItemShortDesc(Handle:plugin,numParams)
 // RPG_GetItemDescription(itemid,String:ret[],maxlen,translatedfor=0);						RPG_GetItemDescription
 stock xRPG_GetItemDescription(itemid,String:ret[],maxlen,translatedfor=0)
 {
-	if(itemid<=0 || itemid>ItemsLoaded) return false;
+	if(itemid<=0 || itemid>ItemsLoaded) return;
 	decl String:TmpBuffer[192],String:ReturnBuffer[192];
 	GetArrayString(g_hItemLongDesc, itemid, TmpBuffer, sizeof(TmpBuffer));
 	Format(ReturnBuffer,sizeof(ReturnBuffer), "%T", TmpBuffer, translatedfor);
@@ -436,19 +428,19 @@ public Native_RPG_GetItemDescription(Handle:plugin,numParams)
 stock xRPG_GetItemCost(itemid)
 {
 	if(itemid<=0 || itemid>ItemsLoaded) return 0;
-	return GetArrayCell(g_hItemCost, item);
+	return GetArrayCell(g_hItemCost, itemid);
 }
 
 public Native_RPG_GetItemCost(Handle:plugin,numParams)
 {
-	if(numParams<4) return;
+	if(numParams<1) return 0;
 	return xRPG_GetItemCost(GetNativeCell(1));
 }
 
 // RPG_GetItemCategory(itemid,String:ret[],maxlen);											RPG_GetItemCategory
 stock xRPG_GetItemCategory(itemid,String:ret[],maxlen,translatedfor=0)
 {
-	if(itemid<=0 || itemid>ItemsLoaded) return false;
+	if(itemid<=0 || itemid>ItemsLoaded) return;
 	decl String:TmpBuffer[64],String:ReturnBuffer[64];
 	GetArrayString(g_h_ItemCategorys, itemid, TmpBuffer, sizeof(TmpBuffer));
 	Format(ReturnBuffer,sizeof(ReturnBuffer), "%T", TmpBuffer, translatedfor);
@@ -457,7 +449,7 @@ stock xRPG_GetItemCategory(itemid,String:ret[],maxlen,translatedfor=0)
 
 public Native_RPG_GetItemCategory(Handle:plugin,numParams)
 {
-	if(numParams<3) return;
+	if(numParams<4) return;
 	decl String:TMPbuffer[64];
 	xRPG_GetItemCategory(GetNativeCell(1),TMPbuffer,sizeof(TMPbuffer),GetNativeCell(4));
 	SetNativeString(2, TMPbuffer, GetNativeCell(3));
@@ -467,15 +459,15 @@ public Native_RPG_GetItemCategory(Handle:plugin,numParams)
 stock TFClassType:xRPG_GetItemClass(itemid)
 {
 	if(itemid<=0 || itemid>ItemsLoaded) return TFClass_Unknown;
-	new iClassID=GetArrayCell(g_hItemClass, item);
+	new iClassID=GetArrayCell(g_hItemClass, itemid);
 	if(iClassID<0 || iClassID>9) return TFClass_Unknown;
 	return TFClassType:iClassID;
 }
 
 public Native_RPG_GetItemClass(Handle:plugin,numParams)
 {
-	if(numParams<4) return;
-	return xRPG_GetItemClass(GetNativeCell(1));
+	if(numParams<1) return 0;
+	return _:xRPG_GetItemClass(GetNativeCell(1));
 }
 
 // Native_GetItemsLoaded();																		Native_GetItemsLoaded
