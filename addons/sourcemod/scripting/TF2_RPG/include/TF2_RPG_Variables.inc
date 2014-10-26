@@ -40,6 +40,12 @@ new Handle:g_hLevel_Progression;
 // Shop Items
 //=============================
 
+// ItemsLoaded is equal to GetArraySize(g_hItemNumber) - 1 from TF2_RPG_LoadConfiguration.sp file
+// use: for(new i = 0; i <= ItemsLoaded; i++)
+new ItemsLoaded=0;
+
+new MaxAllowedItems = MAXITEMS-1;
+
 new Handle:g_hItemNumber;
 new Handle:g_h_ItemCategorys;
 new Handle:g_hItemPluginName;
@@ -58,3 +64,9 @@ new Handle:g_hOnCanPurchaseItem;
 new Handle:g_hOnItemPurchase;
 new Handle:g_hOnItemLost;
 
+//=============================
+// Currency
+//=============================
+
+new String:CurrencyName[16]={"Gold"};
+new MaxCurrency=300;
